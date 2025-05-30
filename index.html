@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified Product Code Generator - Professional System</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-blue: #1e40af;
+            --secondary-blue: #3b82f6;
+            --accent-gold: #f59e0b;
+            --success-green: #10b981;
+            --danger-red: #ef4444;
+            --dark-gray: #1f2937;
+            --medium-gray: #6b7280;
+            --light-gray: #f3f4f6;
+            --white: #ffffff;
+            --shadow-light: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-large: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 75%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: var(--white);
+            padding: 60px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.025em;
+        }
+        
+        .header .subtitle {
+            font-size: 1.3rem;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+        
+        .header .tagline {
+            font-size: 1rem;
+            opacity: 0.8;
+            font-weight: 300;
+        }
+        
+        .content {
+            padding: 50px 40px;
+        }
+        
+        .system-info {
+            background: linear-gradient(135deg, var(--light-gray), #e5e7eb);
+            border-left: 5px solid var(--accent-gold);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+        }
+        
+        .system-info h3 {
+            color: var(--dark-gray);
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .system-info ul {
+            color: var(--medium-gray);
+            padding-left: 20px;
+            list-style-type: none;
+        }
+        
+        .system-info li {
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        .system-info li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--success-green);
+            font-weight: bold;
+        }
+        
+        .code-display {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: var(--white);
+            padding: 35px;
+            border-radius: 16px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow-large);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .code-display::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        .code-display-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .code-display h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .generated-code {
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            padding: 20px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+            margin-bottom: 25px;
+            word-break: break-all;
+            border: 2px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+        
+        .code-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: none;
+            letter-spacing: 0.025em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: inherit;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-copy {
+            background: rgba(255,255,255,0.9);
+            color: var(--primary-blue);
+        }
+        
+        .btn-copy:hover {
+            background: var(--white);
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .btn-save {
+            background: var(--success-green);
+            color: var(--white);
+        }
+        
+        .btn-save:hover {
+            background: #059669;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-clear {
+            background: rgba(255,255,255,0.2);
+            color: var(--white);
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        .btn-clear:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
+        }
+        
+        .form-section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+        }
+        
+        .form-group {
+            background: var(--white);
+            border: 2px solid #e5e7eb;
+            padding: 24px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .form-group:hover {
+            border-color: var(--secondary-blue);
+            box-shadow: var(--shadow-medium);
+            transform: translateY(-1px);
+        }
+        
+        .form-group:focus-within {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--dark-gray);
+            font-size: 1rem;
+        }
+        
+        .position-badge {
+            background: var(--accent-gold);
+            color: var(--white);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 10px;
+            display: inline-block;
+        }
+        
+        select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: var(--white);
+            color: var(--dark-gray);
+            transition: all 0.3s ease;
+            font-family: inherit;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 12px center;
+            background-repeat: no-repeat;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+        }
+        
+        select:hover {
+            border-color: var(--medium-gray);
+        }
+        
+        .saved-codes-section {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border: 2px solid #cbd5e1;
+            padding: 35px;
+            border-radius: 16px;
+            margin-bottom: 40px;
+        }
+        
+        .saved-codes-section h2 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .saved-codes-display {
+            background: var(--white);
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+        
+        .no-codes-message {
+            text-align: center;
+            color: var(--medium-gray);
+            font-style: italic;
+            padding: 40px 20px;
+        }
+        
+        .saved-code-item {
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #cbd5e1;
+            transition: all 0.2s ease;
+        }
+        
+        .saved-code-item:hover {
+            transform: translateX(4px);
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .saved-code-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .code-info {
+            flex: 1;
+        }
+        
+        .code-text {
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--dark-gray);
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        
+        .code-timestamp {
+            font-size: 0.85rem;
+            color: var(--medium-gray);
+            font-weight: 400;
+        }
+        
+        .remove-btn {
+            background: var(--danger-red);
+            color: var(--white);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        
+        .remove-btn:hover {
+            background: #dc2626;
+            transform: scale(1.05);
+        }
+        
+        .saved-codes-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn-download {
+            background: var(--secondary-blue);
+            color: var(--white);
+        }
+        
+        .btn-download:hover {
+            background: var(--primary-blue);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+        
+        .btn-clear-list {
+            background: var(--danger-red);
+            color: var(--white);
+        }
+        
+        .btn-clear-list:hover {
+            background: #dc2626;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+        
+        .toast {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: var(--white);
+            color: var(--dark-gray);
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid #e5e7eb;
+            transform: translateX(400px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast.success {
+            border-left: 4px solid var(--success-green);
+        }
+        
+        .toast.warning {
+            border-left: 4px solid var(--accent-gold);
+        }
+        
+        .toast.error {
+            border-left: 4px solid var(--danger-red);
+        }
+        
+        .footer {
+            background: var(--dark-gray);
+            color: var(--white);
+            text-align: center;
+            padding: 30px;
+            font-size: 0.9rem;
+        }
+        
+        .footer p {
+            opacity: 0.8;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 10px;
+            }
+            
+            .header {
+                padding: 40px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+            
+            .generated-code {
+                font-size: 1.4rem;
+                letter-spacing: 2px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .code-actions,
+            .saved-codes-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .btn {
+                justify-content: center;
+            }
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Custom scrollbar */
+        .saved-codes-display::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .saved-codes-display::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        
+        .saved-codes-display::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        
+        .saved-codes-display::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <h1>Unified Product Code Generator</h1>
+                <p class="subtitle">Professional Manufacturing Code Management System</p>
+                <p class="tagline">Streamline your product identification with standardized 24-digit alphanumeric codes</p>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="system-info">
+                <h3>🏭 System Overview</h3>
+                <ul>
+                    <li>Generate standardized 24-digit alphanumeric product codes</li>
+                    <li>Dropdown-based selection ensures consistency and accuracy</li>
+                    <li>Real-time code generation with instant validation</li>
+                    <li>Integrated list management with professional PDF export</li>
+                    <li>Direct integration capability with ERP systems (FOCUS compatible)</li>
+                    <li>Comprehensive product specification encoding</li>
+                </ul>
+            </div>
+            
+            <div class="code-display">
+                <div class="code-display-content">
+                    <h2>🔧 Generated Product Code</h2>
+                    <div class="generated-code" id="generatedCode">XXXXXXXXXXXXXXXXXXXXXXXX</div>
+                    <div class="code-actions">
+                        <button class="btn btn-copy" onclick="copyCode()">
+                            📋 Copy Code
+                        </button>
+                        <button class="btn btn-save" onclick="saveCode()">
+                            💾 Save to List
+                        </button>
+                        <button class="btn btn-clear" onclick="clearAll()">
+                            🔄 Reset Form
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2 class="section-title">⚙️ Product Specifications</h2>
+                <form id="upcForm">
+                    <div class="form-grid" id="formGrid">
+                        <!-- Form groups will be generated dynamically -->
+                    </div>
+                </form>
+            </div>
+            
+            <div class="saved-codes-section">
+                <h2>📋 Saved Codes Registry</h2>
+                <div class="saved-codes-display" id="savedCodesDisplay">
+                    <p class="no-codes-message">No codes saved yet. Generate and save codes to build your registry.</p>
+                </div>
+                <div class="saved-codes-actions" id="savedCodesActions" style="display: none;">
+                    <button class="btn btn-download" onclick="downloadPDF()">
+                        📄 Export PDF Report
+                    </button>
+                    <button class="btn btn-clear-list" onclick="clearSavedCodes()">
+                        🗑️ Clear Registry
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Unified Product Code Generator System - Professional Manufacturing Solution</p>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        // Store generated codes
+        let savedCodes = [];
+        
+        // UPC Configuration Data (Only active positions)
+        const upcConfig = {
+            1: {
+                label: "Supplier Reference",
+                options: [
+                    { value: "", text: "Select Supplier Reference" },
+                    { value: "1", text: "ELF" },
+                    { value: "2", text: "ELFSKD" },
+                    { value: "3", text: "Ningbo Lumen" },
+                    { value: "4", text: "Venas" },
+                    { value: "5", text: "Tong Hang" },
+                    { value: "6", text: "Virtue Strong" },
+                    { value: "7", text: "Rovos" },
+                    { value: "8", text: "Ecoon" },
+                    { value: "9", text: "Upshine" },
+                    { value: "10", text: "F&K" },
+                    { value: "11", text: "CJZ" },
+                    { value: "12", text: "Supplier 12" },
+                    { value: "13", text: "Supplier 13" },
+                    { value: "14", text: "Supplier 14" },
+                    { value: "15", text: "Supplier 15" }
+                ]
+            },
+            3: {
+                label: "Product Model",
+                options: [
+                    { value: "", text: "Select Product Model" },
+                    { value: "ELPN", text: "ELPN - Panel Light" },
+                    { value: "EWPN", text: "EWPN - Weatherproof" },
+                    { value: "ERPD", text: "ERPD - Recessed Panel" },
+                    { value: "DL27", text: "DL27 - Downlight 27" },
+                    { value: "DL87", text: "DL87 - Downlight 87" },
+                    { value: "DL88", text: "DL88 - Downlight 88" },
+                    { value: "ESDA", text: "ESDA - Surface Dali" },
+                    { value: "ESWA", text: "ESWA - Surface Wall" },
+                    { value: "EWPM", text: "EWPM - Weatherproof Mount" },
+                    { value: "HB00", text: "HB00 - High Bay 00" },
+                    { value: "HB0B", text: "HB0B - High Bay 0B" },
+                    { value: "HB40", text: "HB40 - High Bay 40" },
+                    { value: "HB50", text: "HB50 - High Bay 50" },
+                    { value: "HB30", text: "HB30 - High Bay 30" },
+                    { value: "ELPE", text: "ELPE - Panel Extended" },
+                    { value: "ESQL", text: "ESQL - Square Light" },
+                    { value: "FT20", text: "FT20 - Flood 20" },
+                    { value: "FT16", text: "FT16 - Flood 16" },
+                    { value: "FT80", text: "FT80 - Flood 80" },
+                    { value: "FT50", text: "FT50 - Flood 50" },
+                    { value: "HF50", text: "HF50 - High Flux 50" },
+                    { value: "HF80", text: "HF80 - High Flux 80" },
+                    { value: "HF84", text: "HF84 - High Flux 84" },
+                    { value: "HF85", text: "HF85 - High Flux 85" },
+                    { value: "HF86", text: "HF86 - High Flux 86" },
+                    { value: "HF88", text: "HF88 - High Flux 88" }
+                ]
+            },
+            7: {
+                label: "Power Rating (Watts)",
+                options: [
+                    { value: "", text: "Select Power Rating" },
+                    { value: "12", text: "12W" },
+                    { value: "15", text: "15W" },
+                    { value: "16", text: "16W" },
+                    { value: "18", text: "18W" },
+                    { value: "20", text: "20W" },
+                    { value: "30", text: "30W" },
+                    { value: "36", text: "36W" },
+                    { value: "40", text: "40W" },
+                    { value: "42", text: "42W" },
+                    { value: "45", text: "45W" },
+                    { value: "50", text: "50W" },
+                    { value: "60", text: "60W" },
+                    { value: "80", text: "80W" },
+                    { value: "100", text: "100W" },
+                    { value: "150", text: "150W" },
+                    { value: "200", text: "200W" },
+                    { value: "250", text: "250W" },
+                    { value: "1K", text: "1000W" },
+                    { value: "12K", text: "12000W" },
+                    { value: "15K", text: "15000W" }
+                ]
+            },
+            10: {
+                label: "Color Temperature (CCT)",
+                options: [
+                    { value: "", text: "Select Color Temperature" },
+                    { value: "27", text: "2700K - Warm White" },
+                    { value: "30", text: "3000K - Soft White" },
+                    { value: "32", text: "3200K - Neutral White" },
+                    { value: "40", text: "4000K - Cool White" },
+                    { value: "50", text: "5000K - Daylight" },
+                    { value: "60", text: "6000K - Cool Daylight" },
+                    { value: "65", text: "6500K - Bright Daylight" }
+                ]
+            },
+            12: {
+                label: "Physical Dimensions",
+                options: [
+                    { value: "", text: "Select Physical Dimensions" },
+                    { value: "1", text: "595×595×30mm" },
+                    { value: "2", text: "595×595×35mm" },
+                    { value: "3", text: "1295×595×30mm" },
+                    { value: "4", text: "665×84mm" },
+                    { value: "5", text: "1275×84mm" },
+                    { value: "6", text: "1550×84mm" },
+                    { value: "7", text: "Ø60mm" },
+                    { value: "8", text: "Ø80mm" },
+                    { value: "9", text: "Ø100mm" },
+                    { value: "10", text: "Ø120mm" },
+                    { value: "11", text: "Ø160mm" },
+                    { value: "12", text: "Ø190mm" },
+                    { value: "13", text: "Ø230mm" },
+                    { value: "14", text: "1295×295×30mm" }
+                ]
+            },
+            14: {
+                label: "LED Chip Brand",
+                options: [
+                    { value: "", text: "Select LED Chip Brand" },
+                    { value: "1", text: "Lumiled" },
+                    { value: "2", text: "Osram" },
+                    { value: "3", text: "Seoul Semiconductor" },
+                    { value: "4", text: "Samsung" },
+                    { value: "5", text: "CREE" },
+                    { value: "6", text: "Edison Opto" },
+                    { value: "7", text: "Everlite" },
+                    { value: "98", text: "Tube Rod LED" },
+                    { value: "99", text: "Other Brand" }
+                ]
+            },
+            16: {
+                label: "Driver Brand",
+                options: [
+                    { value: "", text: "Select Driver Brand" },
+                    { value: "1", text: "Tridonic" },
+                    { value: "2", text: "Philips" },
+                    { value: "3", text: "VS Electronics" },
+                    { value: "4", text: "TCI" },
+                    { value: "5", text: "Mean Well" },
+                    { value: "6", text: "ELF" },
+                    { value: "7", text: "Inventronics" },
+                    { value: "8", text: "Eaglerise" },
+                    { value: "9", text: "Boke" },
+                    { value: "10", text: "Lifud" },
+                    { value: "11", text: "Bright Power" },
+                    { value: "12", text: "Osram Driver" },
+                    { value: "13", text: "One Electronic" }
+                ]
+            },
+            18: {
+                label: "Diffuser Type",
+                options: [
+                    { value: "", text: "Select Diffuser Type" },
+                    { value: "1", text: "Opal Diffuser" },
+                    { value: "2", text: "Micro Prism" },
+                    { value: "3", text: "Prismatic" },
+                    { value: "4", text: "Clear Glass" },
+                    { value: "5", text: "Centre Frosted" },
+                    { value: "6", text: "Full Frosted" },
+                    { value: "7", text: "Full Moon Design" },
+                    { value: "8", text: "Half Moon Design" },
+                    { value: "9", text: "PC Clear" }
+                ]
+            },
+            19: {
+                label: "Housing Material",
+                options: [
+                    { value: "", text: "Select Housing Material" },
+                    { value: "1", text: "Black Housing" },
+                    { value: "2", text: "White Housing" },
+                    { value: "3", text: "Silver Housing" },
+                    { value: "4", text: "Grey Housing" },
+                    { value: "5", text: "Graphite Housing" },
+                    { value: "6", text: "PC Housing" },
+                    { value: "7", text: "GRP Housing" }
+                ]
+            },
+            20: {
+                label: "Dimming Control",
+                options: [
+                    { value: "", text: "Select Dimming Control" },
+                    { value: "S", text: "Standard On/Off" },
+                    { value: "D", text: "DALI Dimming" },
+                    { value: "P", text: "Phase Cut Dimming" },
+                    { value: "0", text: "0-10V Dimming" },
+                    { value: "1", text: "1-10V Dimming" },
+                    { value: "T", text: "Triac Dimming" }
+                ]
+            },
+            21: {
+                label: "IP Protection Rating",
+                options: [
+                    { value: "", text: "Select IP Rating" },
+                    { value: "20", text: "IP20 - Indoor Use" },
+                    { value: "40", text: "IP40 - Splash Resistant" },
+                    { value: "44", text: "IP44 - Water Resistant" },
+                    { value: "54", text: "IP54 - Dust/Water Protected" },
+                    { value: "65", text: "IP65 - Dust/Jet Water Proof" },
+                    { value: "66", text: "IP66 - High Pressure Water Proof" }
+                ]
+            },
+            23: {
+                label: "Emergency Backup",
+                options: [
+                    { value: "", text: "Select Emergency Option" },
+                    { value: "E", text: "Emergency Backup Included" },
+                    { value: "N", text: "No Emergency Backup" }
+                ]
+            },
+            24: {
+                label: "Mounting Frame",
+                options: [
+                    { value: "", text: "Select Mounting Frame" },
+                    { value: "1", text: "Dampa Frame" },
+                    { value: "2", text: "Surface Mount" },
+                    { value: "3", text: "Gypsum Frame" },
+                    { value: "4", text: "Full Moon Frame" },
+                    { value: "5", text: "Full Grill Frame" },
+                    { value: "6", text: "Half Moon Frame" },
+                    { value: "7", text: "Oval Full Frame" },
+                    { value: "8", text: "Oval Half Frame" },
+                    { value: "9", text: "Oval Grill Frame" },
+                    { value: "X", text: "Custom/Other Frame" }
+                ]
+            }
+        };
+        
+        // Initialize the form
+        function initializeForm() {
+            const formGrid = document.getElementById('formGrid');
+            
+            // Only create form groups for positions that exist in upcConfig
+            Object.keys(upcConfig).forEach(position => {
+                const config = upcConfig[position];
+                
+                const formGroup = document.createElement('div');
+                formGroup.className = 'form-group';
+                
+                const label = document.createElement('label');
+                label.innerHTML = `${config.label}<span class="position-badge">Position ${position}</span>`;
+                
+                const select = document.createElement('select');
+                select.id = `pos${position}`;
+                select.onchange = updateCode;
+                
+                config.options.forEach(option => {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = option.value;
+                    optionElement.textContent = option.text;
+                    select.appendChild(optionElement);
+                });
+                
+                formGroup.appendChild(label);
+                formGroup.appendChild(select);
+                formGrid.appendChild(formGroup);
+            });
+            
+            updateCode();
+        }
+        
+        // Update the generated code (24 positions)
+        function updateCode() {
+            // Initialize 24-position array with default values
+            let codeArray = new Array(24).fill('X');
+            
+            // Map selected values to their specific positions
+            const positionMap = {
+                1: 0,   // Position 1 -> Array index 0
+                3: 2,   // Position 3 -> Array index 2 (Model Number can be multiple chars)
+                7: 6,   // Position 7 -> Array index 6
+                10: 9,  // Position 10 -> Array index 9
+                12: 11, // Position 12 -> Array index 11
+                14: 13, // Position 14 -> Array index 13
+                16: 15, // Position 16 -> Array index 15
+                18: 17, // Position 18 -> Array index 17
+                19: 18, // Position 19 -> Array index 18
+                20: 19, // Position 20 -> Array index 19
+                21: 20, // Position 21 -> Array index 20
+                23: 22, // Position 23 -> Array index 22
+                24: 23  // Position 24 -> Array index 23
+            };
+            
+            // Fill in selected values at their correct positions
+            Object.keys(upcConfig).forEach(position => {
+                const select = document.getElementById(`pos${position}`);
+                if (select && select.value !== '') {
+                    const value = select.value;
+                    const arrayIndex = positionMap[position];
+                    
+                    // Handle multi-character values (like model numbers)
+                    if (position == '3' && value.length > 1) {
+                        // Model number can span multiple positions
+                        for (let i = 0; i < value.length && (arrayIndex + i) < 24; i++) {
+                            codeArray[arrayIndex + i] = value[i];
+                        }
+                    } else if (position == '21' && value.length > 1) {
+                        // IP Rating spans 2 positions
+                        for (let i = 0; i < value.length && (arrayIndex + i) < 24; i++) {
+                            codeArray[arrayIndex + i] = value[i];
+                        }
+                    } else {
+                        // Single character values
+                        codeArray[arrayIndex] = value;
+                    }
+                }
+            });
+            
+            // Join array to create 24-character code
+            const code = codeArray.join('');
+            
+            document.getElementById('generatedCode').textContent = code;
+        }
+        
+        // Copy code to clipboard
+        async function copyCode() {
+            const code = document.getElementById('generatedCode').textContent;
+            
+            try {
+                await navigator.clipboard.writeText(code);
+                showToast('Product code copied to clipboard successfully', 'success');
+            } catch (err) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = code;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showToast('Product code copied to clipboard', 'success');
+            }
+        }
+        
+        // Save current code to the list
+        function saveCode() {
+            const code = document.getElementById('generatedCode').textContent;
+            
+            if (code === 'XXXXXXXXXXXXXXXXXXXXXXXX') {
+                showToast('Please make product selections before saving', 'warning');
+                return;
+            }
+            
+            // Check if code already exists
+            if (savedCodes.some(item => item.code === code)) {
+                showToast('This product code already exists in your registry', 'warning');
+                return;
+            }
+            
+            // Add code with timestamp and specifications
+            const timestamp = new Date().toLocaleString();
+            const specs = getSelectedSpecifications();
+            
+            savedCodes.push({
+                code: code,
+                timestamp: timestamp,
+                specifications: specs,
+                id: Date.now()
+            });
+            
+            updateSavedCodesDisplay();
+            showToast('Product code saved to registry successfully', 'success');
+        }
+        
+        // Get current selected specifications
+        function getSelectedSpecifications() {
+            const specs = {};
+            Object.keys(upcConfig).forEach(position => {
+                const select = document.getElementById(`pos${position}`);
+                if (select && select.value !== '') {
+                    const selectedOption = select.options[select.selectedIndex];
+                    specs[upcConfig[position].label] = selectedOption.text;
+                }
+            });
+            return specs;
+        }
+        
+        // Update the saved codes display
+        function updateSavedCodesDisplay() {
+            const display = document.getElementById('savedCodesDisplay');
+            const actions = document.getElementById('savedCodesActions');
+            
+            if (savedCodes.length === 0) {
+                display.innerHTML = '<p class="no-codes-message">No codes saved yet. Generate and save codes to build your registry.</p>';
+                actions.style.display = 'none';
+            } else {
+                let html = '';
+                savedCodes.forEach((item, index) => {
+                    html += `
+                        <div class="saved-code-item">
+                            <div class="code-info">
+                                <div class="code-text">${item.code}</div>
+                                <div class="code-timestamp">${item.timestamp}</div>
+                            </div>
+                            <button class="remove-btn" onclick="removeSavedCode(${item.id})" title="Remove from registry">
+                                ✕
+                            </button>
+                        </div>
+                    `;
+                });
+                display.innerHTML = html;
+                actions.style.display = 'flex';
+            }
+        }
+        
+        // Remove a specific saved code
+        function removeSavedCode(id) {
+            savedCodes = savedCodes.filter(item => item.id !== id);
+            updateSavedCodesDisplay();
+            showToast('Product code removed from registry', 'success');
+        }
+        
+        // Clear all saved codes
+        function clearSavedCodes() {
+            if (savedCodes.length === 0) {
+                showToast('Registry is already empty', 'warning');
+                return;
+            }
+            
+            if (confirm('Are you sure you want to clear all saved product codes from the registry?')) {
+                savedCodes = [];
+                updateSavedCodesDisplay();
+                showToast('Product code registry cleared successfully', 'success');
+            }
+        }
+        
+        // Clear all selections
+        function clearAll() {
+            Object.keys(upcConfig).forEach(position => {
+                const select = document.getElementById(`pos${position}`);
+                if (select) {
+                    select.selectedIndex = 0;
+                }
+            });
+            updateCode();
+            showToast('Form reset successfully', 'success');
+        }
+        
+        // Download PDF with all saved codes
+        function downloadPDF() {
+            if (savedCodes.length === 0) {
+                showToast('No product codes to export. Please save some codes first.', 'warning');
+                return;
+            }
+            
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // PDF Header with professional styling
+            doc.setFontSize(24);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(30, 64, 175); // Primary blue
+            doc.text('UNIFIED PRODUCT CODE REGISTRY', 20, 30);
+            
+            doc.setFontSize(16);
+            doc.setTextColor(107, 114, 128); // Gray
+            doc.setFont(undefined, 'normal');
+            doc.text('Professional Manufacturing Code Management System', 20, 45);
+            
+            // Company info section
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Report Generated: ${new Date().toLocaleString()}`, 20, 60);
+            doc.text(`Total Product Codes: ${savedCodes.length}`, 20, 70);
+            doc.text('Status: Active Registry Export', 20, 80);
+            
+            // Draw professional line
+            doc.setLineWidth(1);
+            doc.setDrawColor(59, 130, 246);
+            doc.line(20, 90, 190, 90);
+            
+            // Table headers
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(30, 64, 175);
+            doc.text('Product Code Registry', 20, 105);
+            
+            // Add codes with professional formatting
+            let yPosition = 120;
+            
+            savedCodes.forEach((item, index) => {
+                // Check if we need a new page
+                if (yPosition > 250) {
+                    doc.addPage();
+                    yPosition = 30;
+                    
+                    // Repeat header on new page
+                    doc.setFontSize(14);
+                    doc.setFont(undefined, 'bold');
+                    doc.setTextColor(30, 64, 175);
+                    doc.text('Product Code Registry (Continued)', 20, yPosition);
+                    yPosition += 20;
+                }
+                
+                // Code number and main code
+                doc.setFont(undefined, 'bold');
+                doc.setFontSize(12);
+                doc.setTextColor(0, 0, 0);
+                doc.text(`${String(index + 1).padStart(3, '0')}.`, 20, yPosition);
+                
+                // Product code in monospace style
+                doc.setFont('courier', 'bold');
+                doc.setFontSize(14);
+                doc.setTextColor(30, 64, 175);
+                doc.text(item.code, 35, yPosition);
+                
+                // Timestamp
+                doc.setFont(undefined, 'normal');
+                doc.setFontSize(10);
+                doc.setTextColor(107, 114, 128);
+                doc.text(`Generated: ${item.timestamp}`, 35, yPosition + 8);
+                
+                // Add specifications if available
+                if (item.specifications) {
+                    let specText = [];
+                    Object.entries(item.specifications).forEach(([key, value]) => {
+                        if (value && !value.startsWith('Select')) {
+                            specText.push(`${key}: ${value.replace(/^\d+\s*-\s*/, '')}`);
+                        }
+                    });
+                    
+                    if (specText.length > 0) {
+                        doc.setFontSize(8);
+                        doc.setTextColor(75, 85, 99);
+                        const specString = specText.slice(0, 3).join(' • ');
+                        const splitText = doc.splitTextToSize(specString, 150);
+                        doc.text(splitText, 35, yPosition + 16);
+                    }
+                }
+                
+                yPosition += 35;
+            });
+            
+            // Professional footer
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.setFont(undefined, 'normal');
+                doc.setTextColor(107, 114, 128);
+                doc.text('Unified Product Code Generator - Professional Manufacturing Solution', 20, 285);
+                doc.text(`Page ${i} of ${pageCount}`, 170, 285);
+                doc.text('Confidential - Internal Use Only', 80, 292);
+            }
+            
+            // Save the PDF with professional naming
+            const fileName = `UPC_Registry_${new Date().toISOString().split('T')[0]}_${savedCodes.length}codes.pdf`;
+            doc.save(fileName);
+            
+            showToast('Professional PDF report exported successfully', 'success');
+        }
+        
+        // Show toast notification with different types
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initializeForm);
+    </script>
+</body>
+</html>
