@@ -681,8 +681,23 @@
             margin-bottom: 10px;
         }
         
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        /* Custom scrollbar */
+        .saved-codes-display::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .saved-codes-display::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        
+        .saved-codes-display::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        
+        .saved-codes-display::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
     </style>
 </head>
@@ -768,7 +783,7 @@
                 <div class="saved-codes-display" id="savedCodesDisplay">
                     <p class="no-codes-message">No codes saved yet. Generate and save codes to build your registry.</p>
                 </div>
-                <div class="saved-codes-actions" id="savedCodesActions" style="display: none;">
+                <div class="saved-codes-actions" id="savedCodesActions">
                     <button class="btn btn-download" onclick="downloadPDF()">
                         📄 Export PDF Report
                     </button>
@@ -1496,7 +1511,13 @@
             
             if (savedCodes.length === 0) {
                 display.innerHTML = '<p class="no-codes-message">No codes saved yet. Generate and save codes to build your registry.</p>';
-                actions.style.display = 'none';
+                // Always show the actions section, but make PDF button disabled when no codes
+                const downloadBtn = actions.querySelector('.btn-download');
+                if (downloadBtn) {
+                    downloadBtn.style.opacity = '0.5';
+                    downloadBtn.style.cursor = 'not-allowed';
+                    downloadBtn.setAttribute('disabled', 'true');
+                }
             } else {
                 let html = '';
                 savedCodes.forEach((item, index) => {
@@ -1513,8 +1534,18 @@
                     `;
                 });
                 display.innerHTML = html;
-                actions.style.display = 'flex';
+                
+                // Enable PDF button when codes are available
+                const downloadBtn = actions.querySelector('.btn-download');
+                if (downloadBtn) {
+                    downloadBtn.style.opacity = '1';
+                    downloadBtn.style.cursor = 'pointer';
+                    downloadBtn.removeAttribute('disabled');
+                }
             }
+            
+            // Always show the actions section
+            actions.style.display = 'flex';
         }
         
         // Remove a specific saved code
@@ -1554,6 +1585,12 @@
         function downloadPDF() {
             if (savedCodes.length === 0) {
                 showToast('No product codes to export. Please save some codes first.', 'warning');
+                return;
+            }
+            
+            // Check if jsPDF is loaded
+            if (typeof window.jspdf === 'undefined') {
+                showToast('PDF library not loaded. Please refresh the page and try again.', 'error');
                 return;
             }
             
@@ -1677,7 +1714,16 @@
         }
         
         // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', initializeForm);
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup drag and drop
+            setupDragAndDrop();
+            
+            // Load persisted Excel data
+            loadPersistedExcelData();
+            
+            // Initialize form
+            initializeForm();
+        });
     </script>
 </body>
 </html>
