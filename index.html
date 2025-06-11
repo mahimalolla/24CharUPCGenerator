@@ -720,7 +720,8 @@
                     <li>Real-time code generation with instant validation</li>
                     <li>Integrated list management with professional PDF export</li>
                     <li>Direct integration capability with ERP systems (FOCUS compatible)</li>
-                    <li>Comprehensive product specification encoding</li>
+                    <li>Excel upload for dynamic dropdown population</li>
+                    <li>Works in all environments (local files, web servers, sandboxed)</li>
                 </ul>
             </div>
             
@@ -809,26 +810,236 @@
         let excelData = null;
         let originalConfig = null;
         
-        // Check for persisted Excel data on load
-        function loadPersistedExcelData() {
-            const persistedData = localStorage.getItem('upcExcelData');
-            const persistedFileName = localStorage.getItem('upcExcelFileName');
+        // Fixed-width UPC encoder class
+        class FixedWidthUPCEncoder {
+            constructor() {
+                this.positionMap = [
+                    { name: 'supplier', start: 0, width: 1 },
+                    { name: 'reserved1', start: 1, width: 1 },
+                    { name: 'model', start: 2, width: 4 },
+                    { name: 'reserved2', start: 6, width: 1 },
+                    { name: 'wattage', start: 7, width: 2 },
+                    { name: 'reserved3', start: 9, width: 1 },
+                    { name: 'cct', start: 10, width: 2 },
+                    { name: 'reserved4', start: 12, width: 1 },
+                    { name: 'size', start: 13, width: 1 },
+                    { name: 'reserved5', start: 14, width: 1 },
+                    { name: 'led', start: 15, width: 1 },
+                    { name: 'reserved6', start: 16, width: 1 },
+                    { name: 'driver', start: 17, width: 1 },
+                    { name: 'reserved7', start: 18, width: 1 },
+                    { name: 'diffuser', start: 19, width: 1 },
+                    { name: 'housing', start: 20, width: 1 },
+                    { name: 'dimming', start: 21, width: 1 },
+                    { name: 'ip', start: 22, width: 2 },
+                    { name: 'emergency', start: 24, width: 1 },
+                    { name: 'frame', start: 25, width: 1 }
+                ];
+                this.totalWidth = 24;
+            }
             
-            if (persistedData && persistedFileName) {
+            encode(data) {
+                let result = '';
+                
+                // Build the code according to fixed positions
+                for (let i = 0; i < this.totalWidth; i++) {
+                    const position = this.positionMap.find(p => p.start <= i && i < p.start + p.width);
+                    if (position) {
+                        const value = data[position.name] || '';
+                        const encoded = this.encodePosition(value, position, i - position.start);
+                        result += encoded;
+                    } else {
+                        result += 'X';
+                    }
+                }
+                
+                return result.substring(0, this.totalWidth);
+            }
+            
+            encodePosition(value, position, offset) {
+                if (!value || value === '') return 'X';
+                
+                switch (position.name) {
+                    case 'model':
+                        return this.encodeModel(value, position.width, offset);
+                    case 'wattage':
+                        return this.encodeWattage(value, position.width, offset);
+                    case 'cct':
+                        return this.encodeCCT(value, position.width, offset);
+                    case 'ip':
+                        return this.encodeIP(value, position.width, offset);
+                    default:
+                        return value.toString().charAt(offset) || 'X';
+                }
+            }
+            
+            encodeModel(value, width, offset) {
+                const str = value.toString();
+                if (offset < str.length) {
+                    return str.charAt(offset);
+                }
+                return 'X';
+            }
+            
+            encodeWattage(value, width, offset) {
+                let wattage = value.toString();
+                if (wattage.length === 1) wattage = '0' + wattage;
+                if (wattage.length > 2) wattage = wattage.substring(0, 2);
+                return wattage.charAt(offset) || 'X';
+            }
+            
+            encodeCCT(value, width, offset) {
+                let cct = value.toString();
+                if (cct.length === 1) cct = '0' + cct;
+                if (cct.length > 2) cct = cct.substring(0, 2);
+                return cct.charAt(offset) || 'X';
+            }
+            
+            encodeIP(value, width, offset) {
+                let ip = value.toString();
+                if (ip.length === 1) ip = '0' + ip;
+                if (ip.length > 2) ip = ip.substring(0, 2);
+                return ip.charAt(offset) || 'X';
+            }
+        }
+        
+        // Initialize encoder
+        const upcEncoder = new FixedWidthUPCEncoder();
+        
+        // Excel data manager class with localStorage fallback
+        class ExcelDataManager {
+            constructor() {
+                this.storageKey = 'upcExcelData';
+                this.fileNameKey = 'upcExcelFileName';
+                this.version = 1;
+                this.memoryStorage = {}; // Fallback for when localStorage fails
+                this.storageAvailable = this.checkStorageAvailability();
+            }
+            
+            checkStorageAvailability() {
                 try {
-                    excelData = JSON.parse(persistedData);
-                    updateExcelStatus(persistedFileName, Object.keys(excelData).length);
-                    updateConfigFromExcel();
-                    showToast('Previously uploaded Excel data loaded successfully', 'success');
+                    const test = 'test';
+                    localStorage.setItem(test, test);
+                    localStorage.removeItem(test);
+                    return true;
+                } catch (e) {
+                    console.warn('localStorage not available, using memory storage');
+                    return false;
+                }
+            }
+            
+            storeData(data, fileName) {
+                try {
+                    const versionedData = {
+                        version: this.version,
+                        timestamp: Date.now(),
+                        data: data
+                    };
+                    
+                    if (this.storageAvailable) {
+                        localStorage.setItem(this.storageKey, JSON.stringify(versionedData));
+                        localStorage.setItem(this.fileNameKey, fileName);
+                    } else {
+                        // Use memory storage as fallback
+                        this.memoryStorage[this.storageKey] = JSON.stringify(versionedData);
+                        this.memoryStorage[this.fileNameKey] = fileName;
+                    }
+                    return true;
                 } catch (error) {
-                    console.error('Error loading persisted Excel data:', error);
-                    localStorage.removeItem('upcExcelData');
-                    localStorage.removeItem('upcExcelFileName');
+                    console.error('Storage failed:', error);
+                    // Try memory storage as fallback
+                    try {
+                        this.memoryStorage[this.storageKey] = JSON.stringify({
+                            version: this.version,
+                            timestamp: Date.now(),
+                            data: data
+                        });
+                        this.memoryStorage[this.fileNameKey] = fileName;
+                        return true;
+                    } catch (e) {
+                        return false;
+                    }
+                }
+            }
+            
+            retrieveData() {
+                try {
+                    let stored;
+                    if (this.storageAvailable) {
+                        stored = localStorage.getItem(this.storageKey);
+                    } else {
+                        stored = this.memoryStorage[this.storageKey];
+                    }
+                    
+                    if (!stored) return null;
+                    
+                    const parsed = JSON.parse(stored);
+                    if (parsed.version !== this.version) {
+                        return null;
+                    }
+                    
+                    return parsed.data;
+                } catch (error) {
+                    console.error('Failed to retrieve data:', error);
+                    this.clearData();
+                    return null;
+                }
+            }
+            
+            retrieveFileName() {
+                try {
+                    if (this.storageAvailable) {
+                        return localStorage.getItem(this.fileNameKey);
+                    } else {
+                        return this.memoryStorage[this.fileNameKey];
+                    }
+                } catch (error) {
+                    console.error('Failed to retrieve filename:', error);
+                    return null;
+                }
+            }
+            
+            clearData() {
+                try {
+                    if (this.storageAvailable) {
+                        localStorage.removeItem(this.storageKey);
+                        localStorage.removeItem(this.fileNameKey);
+                    }
+                    // Always clear memory storage
+                    delete this.memoryStorage[this.storageKey];
+                    delete this.memoryStorage[this.fileNameKey];
+                } catch (error) {
+                    console.error('Failed to clear data:', error);
                 }
             }
         }
         
-        // Handle file upload
+        // Initialize data manager
+        const dataManager = new ExcelDataManager();
+        
+        // Check for persisted Excel data on load with error handling
+        function loadPersistedExcelData() {
+            try {
+                const persistedData = dataManager.retrieveData();
+                const persistedFileName = dataManager.retrieveFileName();
+                
+                if (persistedData && persistedFileName) {
+                    excelData = persistedData;
+                    updateExcelStatus(persistedFileName, Object.keys(excelData).length);
+                    
+                    // Use async update to ensure DOM is ready
+                    setTimeout(() => {
+                        updateConfigFromExcel();
+                        showToast('Previously uploaded Excel data loaded successfully', 'success');
+                    }, 100);
+                }
+            } catch (error) {
+                console.warn('Could not load persisted Excel data:', error);
+                // Continue without persisted data
+            }
+        }
+        
+        // Handle file upload with improved error handling
         function handleFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -841,53 +1052,66 @@
             processExcelFile(file);
         }
         
-        // Process Excel file
-        function processExcelFile(file) {
+        // Process Excel file with Promise-based approach
+        async function processExcelFile(file) {
             showProcessingIndicator(true);
             
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    
-                    const parsedData = parseExcelWorkbook(workbook);
-                    
-                    if (Object.keys(parsedData).length === 0) {
-                        showToast('No valid data found in Excel file', 'warning');
-                        showProcessingIndicator(false);
-                        return;
-                    }
-                    
-                    // Store the Excel data
-                    excelData = parsedData;
-                    
-                    // Persist to localStorage
-                    localStorage.setItem('upcExcelData', JSON.stringify(excelData));
-                    localStorage.setItem('upcExcelFileName', file.name);
-                    
-                    // Update the configuration
-                    updateConfigFromExcel();
-                    
-                    // Update UI
-                    updateExcelStatus(file.name, Object.keys(excelData).length);
+            try {
+                const excelData = await readExcelFile(file);
+                
+                if (Object.keys(excelData).length === 0) {
+                    showToast('No valid data found in Excel file', 'warning');
                     showProcessingIndicator(false);
-                    
-                    showToast(`Excel file processed successfully! ${Object.keys(excelData).length} categories loaded`, 'success');
-                    
-                } catch (error) {
-                    console.error('Error processing Excel file:', error);
-                    showToast('Error processing Excel file. Please check the file format.', 'error');
-                    showProcessingIndicator(false);
+                    return;
                 }
-            };
-            
-            reader.onerror = function() {
-                showToast('Error reading Excel file', 'error');
+                
+                // Store the Excel data
+                window.excelData = excelData;
+                
+                // Persist to localStorage
+                dataManager.storeData(excelData, file.name);
+                
+                // Update configuration with proper timing
+                await updateConfigFromExcelAsync(excelData);
+                
+                // Update UI
+                updateExcelStatus(file.name, Object.keys(excelData).length);
                 showProcessingIndicator(false);
-            };
-            
-            reader.readAsArrayBuffer(file);
+                
+                showToast(`Excel file processed successfully! ${Object.keys(excelData).length} categories loaded`, 'success');
+                
+            } catch (error) {
+                console.error('Error processing Excel file:', error);
+                showToast('Error processing Excel file. Please check the file format.', 'error');
+                showProcessingIndicator(false);
+            }
+        }
+        
+        // Promise-based Excel file reader
+        function readExcelFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { 
+                            type: 'array',
+                            cellDates: true,
+                            cellNF: false,
+                            cellText: false
+                        });
+                        
+                        const parsedData = parseExcelWorkbook(workbook);
+                        resolve(parsedData);
+                    } catch (error) {
+                        reject(new Error('Failed to parse Excel: ' + error.message));
+                    }
+                };
+                
+                reader.onerror = () => reject(new Error('Failed to read file'));
+                reader.readAsArrayBuffer(file);
+            });
         }
         
         // Parse Excel workbook
@@ -942,27 +1166,29 @@
             return parsedData;
         }
         
-        // Update configuration from Excel data
-        function updateConfigFromExcel() {
-            if (!excelData) return;
+        // Update configuration from Excel data with async handling
+        async function updateConfigFromExcelAsync(data) {
+            if (!data) return;
             
             // Store original configuration if not already stored
             if (!originalConfig) {
                 originalConfig = JSON.parse(JSON.stringify(upcConfig));
             }
             
-            // Find matching categories and merge or add new ones
-            Object.keys(excelData).forEach(excelCategory => {
-                const excelCategoryData = excelData[excelCategory];
+            // Clear current config and rebuild
+            Object.keys(upcConfig).forEach(key => delete upcConfig[key]);
+            
+            // Start with original config
+            Object.assign(upcConfig, JSON.parse(JSON.stringify(originalConfig)));
+            
+            // Process Excel data and merge/add categories
+            Object.entries(data).forEach(([excelCategory, excelCategoryData]) => {
                 let matched = false;
                 
                 // Try to match with existing categories
-                Object.keys(originalConfig).forEach(position => {
-                    const existingCategory = originalConfig[position];
-                    
-                    // Check for similar category names
+                Object.entries(originalConfig).forEach(([position, existingCategory]) => {
                     if (isSimilarCategory(existingCategory.label, excelCategory)) {
-                        // Merge options (add Excel options to existing ones)
+                        // Merge options
                         const mergedOptions = [...existingCategory.options];
                         
                         excelCategoryData.options.forEach(excelOption => {
@@ -983,7 +1209,6 @@
                 
                 // If no match found, add as new category
                 if (!matched) {
-                    // Find next available position (25, 26, etc.)
                     let newPosition = 25;
                     while (upcConfig[newPosition]) {
                         newPosition++;
@@ -997,8 +1222,56 @@
                 }
             });
             
-            // Reinitialize the form with updated configuration
-            reinitializeForm();
+            // Use requestAnimationFrame to ensure DOM is ready
+            return new Promise(resolve => {
+                requestAnimationFrame(() => {
+                    reinitializeForm();
+                    resolve();
+                });
+            });
+        }
+        
+        // Legacy sync version for backward compatibility
+        function updateConfigFromExcel() {
+            if (window.excelData) {
+                updateConfigFromExcelAsync(window.excelData);
+            }
+        }
+        
+        // Improved form reinitialization with proper cleanup
+        function reinitializeForm() {
+            const formGrid = document.getElementById('formGrid');
+            
+            // Clear existing form elements
+            while (formGrid.firstChild) {
+                formGrid.removeChild(formGrid.firstChild);
+            }
+            
+            // Rebuild form with updated configuration
+            initializeForm();
+            
+            // Update the code display
+            updateCode();
+        }
+        
+        // Safe dropdown update with proper DOM manipulation
+        function updateDropdownSafe(selectElement, optionsData) {
+            // Clear existing options reliably
+            selectElement.options.length = 0;
+            
+            // Use DocumentFragment for better performance
+            const fragment = document.createDocumentFragment();
+            
+            // Add options
+            optionsData.forEach(item => {
+                const option = new Option(item.text, item.value);
+                fragment.appendChild(option);
+            });
+            
+            selectElement.appendChild(fragment);
+            
+            // Trigger change event to notify other components
+            selectElement.dispatchEvent(new Event('change', { bubbles: true }));
         }
         
         // Check if two category names are similar
@@ -1061,13 +1334,12 @@
             statusDiv.style.display = 'block';
         }
         
-        // Remove Excel data
+        // Remove Excel data with improved cleanup
         function removeExcelData() {
             if (confirm('Are you sure you want to remove the Excel configuration? This will restore default settings.')) {
                 // Clear Excel data
-                excelData = null;
-                localStorage.removeItem('upcExcelData');
-                localStorage.removeItem('upcExcelFileName');
+                window.excelData = null;
+                dataManager.clearData();
                 
                 // Restore original configuration
                 if (originalConfig) {
@@ -1078,11 +1350,12 @@
                 // Clear file input
                 document.getElementById('excelFile').value = '';
                 
-                // Update UI
-                document.getElementById('excelStatus').style.display = 'none';
-                reinitializeForm();
-                
-                showToast('Excel configuration removed. Default settings restored.', 'success');
+                // Update UI with proper timing
+                requestAnimationFrame(() => {
+                    document.getElementById('excelStatus').style.display = 'none';
+                    reinitializeForm();
+                    showToast('Excel configuration removed. Default settings restored.', 'success');
+                });
             }
         }
         
@@ -1389,57 +1662,47 @@
             updateCode();
         }
         
-        // Update the generated code (24 positions)
+        // Update the generated code using fixed-width encoder
         function updateCode() {
-            // Initialize 24-position array with default values
-            let codeArray = new Array(24).fill('X');
+            // Collect form data
+            const formData = {};
             
-            // Map selected values to their specific positions
-            const positionMap = {
-                1: 0,   // Position 1 -> Array index 0
-                3: 2,   // Position 3 -> Array index 2 (Model Number can be multiple chars)
-                7: 6,   // Position 7 -> Array index 6
-                10: 9,  // Position 10 -> Array index 9
-                12: 11, // Position 12 -> Array index 11
-                14: 13, // Position 14 -> Array index 13
-                16: 15, // Position 16 -> Array index 15
-                18: 17, // Position 18 -> Array index 17
-                19: 18, // Position 19 -> Array index 18
-                20: 19, // Position 20 -> Array index 19
-                21: 20, // Position 21 -> Array index 20
-                23: 22, // Position 23 -> Array index 22
-                24: 23  // Position 24 -> Array index 23
-            };
-            
-            // Fill in selected values at their correct positions
             Object.keys(upcConfig).forEach(position => {
                 const select = document.getElementById(`pos${position}`);
                 if (select && select.value !== '') {
-                    const value = select.value;
-                    const arrayIndex = positionMap[position];
-                    
-                    // Handle multi-character values (like model numbers)
-                    if (position == '3' && value.length > 1) {
-                        // Model number can span multiple positions
-                        for (let i = 0; i < value.length && (arrayIndex + i) < 24; i++) {
-                            codeArray[arrayIndex + i] = value[i];
-                        }
-                    } else if (position == '21' && value.length > 1) {
-                        // IP Rating spans 2 positions
-                        for (let i = 0; i < value.length && (arrayIndex + i) < 24; i++) {
-                            codeArray[arrayIndex + i] = value[i];
-                        }
-                    } else {
-                        // Single character values
-                        codeArray[arrayIndex] = value;
+                    // Map position to encoder field names
+                    const fieldName = mapPositionToField(position);
+                    if (fieldName) {
+                        formData[fieldName] = select.value;
                     }
                 }
             });
             
-            // Join array to create 24-character code
-            const code = codeArray.join('');
+            // Generate fixed-width code
+            const code = upcEncoder.encode(formData);
             
+            // Display the code
             document.getElementById('generatedCode').textContent = code;
+        }
+        
+        // Map UPC config positions to encoder field names
+        function mapPositionToField(position) {
+            const mapping = {
+                '1': 'supplier',
+                '3': 'model',
+                '7': 'wattage',
+                '10': 'cct',
+                '12': 'size',
+                '14': 'led',
+                '16': 'driver',
+                '18': 'diffuser',
+                '19': 'housing',
+                '20': 'dimming',
+                '21': 'ip',
+                '23': 'emergency',
+                '24': 'frame'
+            };
+            return mapping[position] || null;
         }
         
         // Copy code to clipboard
