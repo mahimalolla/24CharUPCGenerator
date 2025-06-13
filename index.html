@@ -810,96 +810,256 @@
         let excelData = null;
         let originalConfig = null;
         
-        // Fixed-width UPC encoder class
+        // Fixed-width UPC encoder class matching exact client requirements
         class FixedWidthUPCEncoder {
             constructor() {
+                // Based on analysis of client's expected codes: X1ELPNX3240X1X1X612S44NX
                 this.positionMap = [
-                    { name: 'supplier', start: 0, width: 1 },
-                    { name: 'reserved1', start: 1, width: 1 },
-                    { name: 'model', start: 2, width: 4 },
-                    { name: 'reserved2', start: 6, width: 1 },
-                    { name: 'wattage', start: 7, width: 2 },
-                    { name: 'reserved3', start: 9, width: 1 },
-                    { name: 'cct', start: 10, width: 2 },
-                    { name: 'reserved4', start: 12, width: 1 },
-                    { name: 'size', start: 13, width: 1 },
-                    { name: 'reserved5', start: 14, width: 1 },
-                    { name: 'led', start: 15, width: 1 },
-                    { name: 'reserved6', start: 16, width: 1 },
-                    { name: 'driver', start: 17, width: 1 },
-                    { name: 'reserved7', start: 18, width: 1 },
-                    { name: 'diffuser', start: 19, width: 1 },
-                    { name: 'housing', start: 20, width: 1 },
-                    { name: 'dimming', start: 21, width: 1 },
-                    { name: 'ip', start: 22, width: 2 },
-                    { name: 'emergency', start: 24, width: 1 },
-                    { name: 'frame', start: 25, width: 1 }
+                    { name: 'reserved0', start: 0, width: 1 },     // Position 1: Always 'X'
+                    { name: 'supplier', start: 1, width: 1 },      // Position 2: '1'
+                    { name: 'model', start: 2, width: 4 },         // Position 3-6: 'ELPN'
+                    { name: 'reserved1', start: 6, width: 1 },     // Position 7: Always 'X'
+                    { name: 'wattage', start: 7, width: 2 },       // Position 8-9: '32'
+                    { name: 'cct', start: 9, width: 2 },           // Position 10-11: '40'
+                    { name: 'reserved2', start: 11, width: 1 },    // Position 12: Always 'X'
+                    { name: 'size', start: 12, width: 1 },         // Position 13: '1'
+                    { name: 'reserved3', start: 13, width: 1 },    // Position 14: Always 'X'
+                    { name: 'led', start: 14, width: 1 },          // Position 15: '1'
+                    { name: 'reserved4', start: 15, width: 1 },    // Position 16: Always 'X'
+                    { name: 'driver', start: 16, width: 1 },       // Position 17: '6'
+                    { name: 'diffuser', start: 17, width: 1 },     // Position 18: '1'
+                    { name: 'housing', start: 18, width: 1 },      // Position 19: '2'
+                    { name: 'dimming', start: 19, width: 1 },      // Position 20: 'S'
+                    { name: 'ip', start: 20, width: 2 },           // Position 21-22: '44'
+                    { name: 'emergency', start: 22, width: 1 },    // Position 23: 'N'
+                    { name: 'frame', start: 23, width: 1 }         // Position 24: 'X'
                 ];
                 this.totalWidth = 24;
             }
             
             encode(data) {
-                let result = '';
+                // Initialize with X's
+                let codeArray = new Array(this.totalWidth).fill('X');
                 
-                // Build the code according to fixed positions
-                for (let i = 0; i < this.totalWidth; i++) {
-                    const position = this.positionMap.find(p => p.start <= i && i < p.start + p.width);
-                    if (position) {
-                        const value = data[position.name] || '';
-                        const encoded = this.encodePosition(value, position, i - position.start);
-                        result += encoded;
+                // Set reserved positions
+                codeArray[0] = 'X';  // Position 1 always X
+                codeArray[6] = 'X';  // Position 7 always X  
+                codeArray[11] = 'X'; // Position 12 always X
+                codeArray[13] = 'X'; // Position 14 always X
+                codeArray[15] = 'X'; // Position 16 always X
+                
+                // Fill in each field at its correct position
+                this.positionMap.forEach(field => {
+                    if (field.name.startsWith('reserved')) return; // Skip reserved fields
+                    
+                    if (data[field.name] && data[field.name] !== '') {
+                        const encoded = this.encodeField(data[field.name], field);
+                        
+                        // Place encoded value at correct position
+                        for (let i = 0; i < encoded.length && i < field.width; i++) {
+                            codeArray[field.start + i] = encoded[i];
+                        }
+                    }
+                });
+                
+                return codeArray.join('');
+            }
+            
+            encodeField(value, field) {
+                switch (field.name) {
+                    case 'supplier':
+                        return this.encodeSupplier(value);
+                    case 'model':
+                        return this.encodeModel(value, field.width);
+                    case 'wattage':
+                        return this.encodeWattage(value, field.width);
+                    case 'cct':
+                        return this.encodeCCT(value, field.width);
+                    case 'size':
+                        return this.encodeSize(value);
+                    case 'led':
+                        return this.encodeLED(value);
+                    case 'driver':
+                        return this.encodeDriver(value);
+                    case 'diffuser':
+                        return this.encodeDiffuser(value);
+                    case 'housing':
+                        return this.encodeHousing(value);
+                    case 'dimming':
+                        return this.encodeDimming(value);
+                    case 'ip':
+                        return this.encodeIP(value, field.width);
+                    case 'emergency':
+                        return this.encodeEmergency(value);
+                    case 'frame':
+                        return this.encodeFrame(value);
+                    default:
+                        return value.toString().substring(0, field.width).padEnd(field.width, 'X');
+                }
+            }
+            
+            encodeSupplier(value) {
+                // Supplier is 1 character: 1, 2, 3, etc.
+                const num = parseInt(value);
+                if (!isNaN(num)) {
+                    if (num <= 9) {
+                        return num.toString();
                     } else {
-                        result += 'X';
+                        // For suppliers 10+, use letters A=10, B=11, etc.
+                        return String.fromCharCode(65 + (num - 10));
                     }
                 }
-                
-                return result.substring(0, this.totalWidth);
+                return value.toString().charAt(0).toUpperCase();
             }
             
-            encodePosition(value, position, offset) {
-                if (!value || value === '') return 'X';
-                
-                switch (position.name) {
-                    case 'model':
-                        return this.encodeModel(value, position.width, offset);
-                    case 'wattage':
-                        return this.encodeWattage(value, position.width, offset);
-                    case 'cct':
-                        return this.encodeCCT(value, position.width, offset);
-                    case 'ip':
-                        return this.encodeIP(value, position.width, offset);
-                    default:
-                        return value.toString().charAt(offset) || 'X';
+            encodeModel(value, width) {
+                // Model should be exactly 4 characters: ELPN, EWPN, etc.
+                let model = value.toString().toUpperCase();
+                if (model.length > width) {
+                    return model.substring(0, width);
                 }
+                return model.padEnd(width, 'X');
             }
             
-            encodeModel(value, width, offset) {
-                const str = value.toString();
-                if (offset < str.length) {
-                    return str.charAt(offset);
+            encodeWattage(value, width) {
+                // Wattage is 2 characters: 32, 40, etc.
+                let wattStr = value.toString().replace(/[^\d]/g, '');
+                
+                if (wattStr === '1000' || value.toString().includes('1K')) {
+                    return '1K';
+                } else if (wattStr === '12000' || value.toString().includes('12K')) {
+                    return '12';  // Take first 2 chars
+                } else if (wattStr === '15000' || value.toString().includes('15K')) {
+                    return '15';  // Take first 2 chars
+                } else {
+                    const watt = parseInt(wattStr);
+                    if (!isNaN(watt)) {
+                        if (watt < 10) {
+                            return '0' + watt; // 06, 07, 08
+                        } else {
+                            return watt.toString().substring(0, 2); // 32, 40, 50
+                        }
+                    }
                 }
-                return 'X';
+                return 'XX';
             }
             
-            encodeWattage(value, width, offset) {
-                let wattage = value.toString();
-                if (wattage.length === 1) wattage = '0' + wattage;
-                if (wattage.length > 2) wattage = wattage.substring(0, 2);
-                return wattage.charAt(offset) || 'X';
+            encodeCCT(value, width) {
+                // CCT is 2 characters: 30, 40, 60, etc.
+                const cct = value.toString();
+                if (cct.length >= 2) {
+                    return cct.substring(0, 2);
+                }
+                return cct.padStart(2, '0');
             }
             
-            encodeCCT(value, width, offset) {
-                let cct = value.toString();
-                if (cct.length === 1) cct = '0' + cct;
-                if (cct.length > 2) cct = cct.substring(0, 2);
-                return cct.charAt(offset) || 'X';
+            encodeSize(value) {
+                // Size is 1 character: 1, 2, 3, etc.
+                const num = parseInt(value);
+                if (!isNaN(num)) {
+                    if (num <= 9) {
+                        return num.toString();
+                    } else {
+                        // For sizes 10+, use letters A=10, B=11, etc.
+                        return String.fromCharCode(65 + (num - 10));
+                    }
+                }
+                return value.toString().charAt(0).toUpperCase();
             }
             
-            encodeIP(value, width, offset) {
-                let ip = value.toString();
-                if (ip.length === 1) ip = '0' + ip;
-                if (ip.length > 2) ip = ip.substring(0, 2);
-                return ip.charAt(offset) || 'X';
+            encodeLED(value) {
+                // LED is 1 character: 1, 2, 3, etc.
+                const num = parseInt(value);
+                if (!isNaN(num)) {
+                    if (num <= 9) {
+                        return num.toString();
+                    } else if (num === 98) {
+                        return '8'; // Tube Rod -> 8 (single char)
+                    } else if (num === 99) {
+                        return '9'; // Other Brands -> 9 (single char)  
+                    } else {
+                        // For LED 10+, use letters A=10, B=11, etc.
+                        return String.fromCharCode(65 + (num - 10));
+                    }
+                }
+                return value.toString().charAt(0).toUpperCase();
+            }
+            
+            encodeDriver(value) {
+                // Driver is 1 character: 1, 2, 3, 6, etc.
+                const num = parseInt(value);
+                if (!isNaN(num)) {
+                    if (num <= 9) {
+                        return num.toString();
+                    } else {
+                        // For drivers 10+, use letters A=10, B=11, etc.
+                        return String.fromCharCode(65 + (num - 10));
+                    }
+                }
+                return value.toString().charAt(0).toUpperCase();
+            }
+            
+            encodeDiffuser(value) {
+                // Diffuser is 1 character: 1, 2, 3, etc.
+                const num = parseInt(value);
+                if (!isNaN(num)) {
+                    if (num <= 9) {
+                        return num.toString();
+                    } else {
+                        // For diffusers 10+, use letters a=10, b=11, etc.
+                        return String.fromCharCode(97 + (num - 10));
+                    }
+                }
+                return value.toString().charAt(0).toLowerCase();
+            }
+            
+            encodeHousing(value) {
+                // Housing is 1 character: 1, 2, 3, etc.
+                const num = parseInt(value);
+                if (!isNaN(num)) {
+                    if (num <= 9) {
+                        return num.toString();
+                    } else {
+                        // For housing 10+, use letters a=10, b=11, etc.
+                        return String.fromCharCode(97 + (num - 10));
+                    }
+                }
+                return value.toString().charAt(0).toLowerCase();
+            }
+            
+            encodeDimming(value) {
+                // Dimming is 1 character: S, D, P, 0, 1, T
+                return value.toString().charAt(0).toUpperCase();
+            }
+            
+            encodeIP(value, width) {
+                // IP rating is 2 characters: 44, 65, etc.
+                const ip = value.toString().replace(/[^\d]/g, '');
+                if (ip.length >= 2) {
+                    return ip.substring(0, 2);
+                }
+                return ip.padStart(2, '0');
+            }
+            
+            encodeEmergency(value) {
+                // Emergency is 1 character: E, N
+                return value.toString().charAt(0).toUpperCase();
+            }
+            
+            encodeFrame(value) {
+                // Frame is 1 character: 1, 2, 3, X, etc.
+                const num = parseInt(value);
+                if (!isNaN(num)) {
+                    if (num <= 9) {
+                        return num.toString();
+                    } else {
+                        return String.fromCharCode(65 + (num - 10));
+                    }
+                }
+                if (value.toString().toUpperCase() === 'X') {
+                    return 'X';
+                }
+                return value.toString().charAt(0).toUpperCase();
             }
         }
         
@@ -1688,19 +1848,19 @@
         // Map UPC config positions to encoder field names
         function mapPositionToField(position) {
             const mapping = {
-                '1': 'supplier',
-                '3': 'model',
-                '7': 'wattage',
-                '10': 'cct',
-                '12': 'size',
-                '14': 'led',
-                '16': 'driver',
-                '18': 'diffuser',
-                '19': 'housing',
-                '20': 'dimming',
-                '21': 'ip',
-                '23': 'emergency',
-                '24': 'frame'
+                '1': 'supplier',    // Position 1
+                '3': 'model',       // Position 2-5 (model spans 4 chars)
+                '7': 'wattage',     // Position 7-9 (wattage spans 3 chars)
+                '10': 'cct',        // Position 10-11 (CCT spans 2 chars)
+                '12': 'size',       // Position 12
+                '14': 'led',        // Position 14-15 (LED spans 2 chars)
+                '16': 'driver',     // Position 16
+                '18': 'diffuser',   // Position 18
+                '19': 'housing',    // Position 19
+                '20': 'dimming',    // Position 20
+                '21': 'ip',         // Position 21-22 (IP spans 2 chars)
+                '23': 'emergency',  // Position 23
+                '24': 'frame'       // Position 24
             };
             return mapping[position] || null;
         }
