@@ -1255,52 +1255,103 @@
             });
         }
         
-        // Parse Excel workbook
+        // Parse Excel workbook - ENHANCED VERSION for complex structures
         function parseExcelWorkbook(workbook) {
             const parsedData = {};
+            console.log('📊 Processing Excel workbook with sheets:', workbook.SheetNames);
             
             workbook.SheetNames.forEach(sheetName => {
+                console.log(`📄 Processing sheet: ${sheetName}`);
                 const worksheet = workbook.Sheets[sheetName];
-                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
                 
-                if (jsonData.length < 2) return;
+                // Get the range of the worksheet
+                const range = XLSX.utils.decode_range(worksheet['!ref']);
+                console.log(`📐 Sheet range:`, range);
                 
-                const headers = jsonData[0];
-                const rows = jsonData.slice(1);
+                // Find the actual header row (look for non-empty cells in first few rows)
+                let headerRow = -1;
+                for (let row = 0; row <= 5; row++) {
+                    let hasData = false;
+                    for (let col = range.s.c; col <= range.e.c; col++) {
+                        const cellAddress = XLSX.utils.encode_cell({r: row, c: col});
+                        const cell = worksheet[cellAddress];
+                        if (cell && cell.v && cell.v.toString().trim() !== '') {
+                            hasData = true;
+                            break;
+                        }
+                    }
+                    if (hasData) {
+                        // Check if this looks like a header row
+                        const firstCellAddress = XLSX.utils.encode_cell({r: row, c: range.s.c});
+                        const firstCell = worksheet[firstCellAddress];
+                        if (firstCell && firstCell.v && firstCell.v.toString().toLowerCase().includes('supplier')) {
+                            headerRow = row;
+                            console.log(`📋 Found header row at: ${row}`);
+                            break;
+                        }
+                    }
+                }
                 
-                headers.forEach((header, columnIndex) => {
-                    if (!header || header.trim() === '') return;
+                if (headerRow === -1) {
+                    console.log('❌ No valid header row found');
+                    return;
+                }
+                
+                // Extract headers
+                const headers = [];
+                for (let col = range.s.c; col <= range.e.c; col++) {
+                    const cellAddress = XLSX.utils.encode_cell({r: headerRow, c: col});
+                    const cell = worksheet[cellAddress];
+                    if (cell && cell.v) {
+                        headers[col] = cell.v.toString().trim();
+                    }
+                }
+                
+                console.log('📋 Headers found:', headers);
+                
+                // Extract data starting from the row after headers
+                for (let col = range.s.c; col <= range.e.c; col++) {
+                    const header = headers[col];
+                    if (!header || header === '') continue;
                     
-                    const cleanHeader = header.toString().trim();
+                    console.log(`📝 Processing column: ${header}`);
                     const values = [];
                     
-                    rows.forEach(row => {
-                        if (row[columnIndex] && row[columnIndex].toString().trim() !== '') {
-                            const value = row[columnIndex].toString().trim();
-                            if (!values.some(v => v.value === value)) {
+                    // Read all data in this column
+                    for (let row = headerRow + 1; row <= range.e.r; row++) {
+                        const cellAddress = XLSX.utils.encode_cell({r: row, c: col});
+                        const cell = worksheet[cellAddress];
+                        if (cell && cell.v !== undefined && cell.v !== null) {
+                            const cellValue = cell.v.toString().trim();
+                            if (cellValue !== '' && !values.some(v => v.value === cellValue)) {
                                 values.push({
-                                    value: value,
-                                    text: value
+                                    value: cellValue,
+                                    text: cellValue
                                 });
+                                console.log(`  ✓ Added value: ${cellValue}`);
                             }
                         }
-                    });
+                    }
                     
                     if (values.length > 0) {
+                        // Add default "Select" option
                         values.unshift({
                             value: "",
-                            text: `Select ${cleanHeader}`
+                            text: `Select ${header}`
                         });
                         
-                        parsedData[cleanHeader] = {
-                            label: cleanHeader,
+                        parsedData[header] = {
+                            label: header,
                             options: values,
                             position: null
                         };
+                        
+                        console.log(`✅ Column "${header}" processed with ${values.length - 1} values`);
                     }
-                });
+                }
             });
             
+            console.log('🎯 Final parsed data:', parsedData);
             return parsedData;
         }
         
