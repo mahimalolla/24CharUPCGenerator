@@ -883,19 +883,24 @@
             }
             
             encodeSupplier(value, width) {
-                // Fix: Supplier bandwidth is 2, can accommodate 10, 11, 12, etc.
+                // Fix: Supplier bandwidth is 2, must show 10, 11, 12 as numbers, not letters
                 const num = parseInt(value);
                 if (!isNaN(num)) {
                     if (num <= 9) {
                         return '0' + num; // 01, 02, 03...09
                     } else if (num <= 99) {
-                        return num.toString(); // 10, 11, 12...99
+                        return num.toString(); // 10, 11, 12...99 (NOT letters!)
                     } else {
                         return '99'; // Cap at 99
                     }
                 }
-                // Handle text suppliers by taking first 2 characters
-                return value.toString().toUpperCase().substring(0, width).padEnd(width, 'X');
+                // Handle text suppliers - take first 2 characters or pad
+                const text = value.toString().toUpperCase();
+                if (text.length >= 2) {
+                    return text.substring(0, 2);
+                } else {
+                    return text.padEnd(2, 'X');
+                }
             }
             
             encodeModel(value, width) {
@@ -913,13 +918,13 @@
                 
                 // Handle special cases first
                 if (wattStr.includes('1K') || wattStr === '1000') {
-                    return '01K'; // 3 chars: 01K
+                    return '01K'; // 3 chars: 01K (with leading zero for consistency)
                 } else if (wattStr.includes('12K') || wattStr === '12000') {
                     return '12K'; // 3 chars: 12K
                 } else if (wattStr.includes('15K') || wattStr === '15000') {
                     return '15K'; // 3 chars: 15K
                 } else {
-                    // Extract numeric value
+                    // Extract numeric value only
                     const watt = parseInt(wattStr.replace(/[^\d]/g, ''));
                     if (!isNaN(watt)) {
                         if (watt < 10) {
@@ -946,22 +951,28 @@
             }
             
             encodeSize(value, width) {
-                // Fix: Size bandwidth is 2, can accommodate 10, 11, 12, etc.
+                // Fix: Size bandwidth is 2, must show 10, 11, 12 as numbers, not letters
                 const num = parseInt(value);
                 if (!isNaN(num)) {
                     if (num <= 9) {
                         return '0' + num; // 01, 02, 03...09
                     } else if (num <= 99) {
-                        return num.toString(); // 10, 11, 12...99
+                        return num.toString(); // 10, 11, 12...99 (NOT letters!)
                     } else {
                         return '99'; // Cap at 99
                     }
                 }
-                return value.toString().substring(0, width).padEnd(width, 'X');
+                // Handle text sizes
+                const text = value.toString().toUpperCase();
+                if (text.length >= 2) {
+                    return text.substring(0, 2);
+                } else {
+                    return text.padEnd(2, 'X');
+                }
             }
             
             encodeLED(value, width) {
-                // Fix: LED bandwidth is 2, can accommodate 98, 99, 10, 11, etc.
+                // Fix: LED bandwidth is 2, must show 98, 99, 10, 11 as numbers, not letters
                 const num = parseInt(value);
                 if (!isNaN(num)) {
                     if (num === 98) {
@@ -971,27 +982,39 @@
                     } else if (num <= 9) {
                         return '0' + num; // 01, 02, 03...09
                     } else if (num <= 99) {
-                        return num.toString(); // 10, 11, 12...97
+                        return num.toString(); // 10, 11, 12...97 (NOT letters!)
                     } else {
                         return '99'; // Cap at 99
                     }
                 }
-                return value.toString().substring(0, width).padStart(width, '0');
+                // Handle text LED brands
+                const text = value.toString().toUpperCase();
+                if (text.length >= 2) {
+                    return text.substring(0, 2);
+                } else {
+                    return text.padStart(2, '0');
+                }
             }
             
             encodeDriver(value, width) {
-                // Fix: Driver bandwidth is 2, can accommodate 10, 11, 12, etc.
+                // Fix: Driver bandwidth is 2, must show 10, 11, 12 as numbers, not letters
                 const num = parseInt(value);
                 if (!isNaN(num)) {
                     if (num <= 9) {
                         return '0' + num; // 01, 02, 03...09
                     } else if (num <= 99) {
-                        return num.toString(); // 10, 11, 12...99
+                        return num.toString(); // 10, 11, 12...99 (NOT letters!)
                     } else {
                         return '99'; // Cap at 99
                     }
                 }
-                return value.toString().substring(0, width).padEnd(width, 'X');
+                // Handle text drivers
+                const text = value.toString().toUpperCase();
+                if (text.length >= 2) {
+                    return text.substring(0, 2);
+                } else {
+                    return text.padEnd(2, 'X');
+                }
             }
             
             encodeDiffuser(value) {
