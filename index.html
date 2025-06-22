@@ -1213,6 +1213,12 @@
                 updateExcelStatus(file.name, Object.keys(excelData).length);
                 showProcessingIndicator(false);
                 
+                // Debug: Log the categories that were processed
+                console.log('Excel categories found:', Object.keys(excelData));
+                Object.entries(excelData).forEach(([category, data]) => {
+                    console.log(`${category}:`, data.options.slice(0, 5)); // Show first 5 options
+                });
+                
                 showToast(`Excel file processed successfully! ${Object.keys(excelData).length} categories loaded`, 'success');
                 
             } catch (error) {
@@ -1314,18 +1320,15 @@
                 
                 Object.entries(originalConfig).forEach(([position, existingCategory]) => {
                     if (isSimilarCategory(existingCategory.label, excelCategory)) {
-                        const mergedOptions = [...existingCategory.options];
-                        
-                        excelCategoryData.options.forEach(excelOption => {
-                            if (excelOption.value !== "" && 
-                                !mergedOptions.some(existing => existing.value === excelOption.value)) {
-                                mergedOptions.push(excelOption);
-                            }
-                        });
+                        console.log(`✅ Matched "${excelCategory}" with "${existingCategory.label}" at position ${position}`);
+                        // For matched categories, REPLACE with Excel data instead of merging
+                        // Keep the first "Select..." option, then add all Excel options
+                        const selectOption = existingCategory.options[0]; // "Select..." option
+                        const newOptions = [selectOption, ...excelCategoryData.options.slice(1)];
                         
                         upcConfig[position] = {
                             ...existingCategory,
-                            options: mergedOptions
+                            options: newOptions
                         };
                         
                         matched = true;
@@ -1333,6 +1336,7 @@
                 });
                 
                 if (!matched) {
+                    console.log(`❌ No match found for "${excelCategory}" - adding as new category`);
                     let newPosition = 25;
                     while (upcConfig[newPosition]) {
                         newPosition++;
@@ -1383,13 +1387,14 @@
             if (existingNorm.includes(excelNorm) || excelNorm.includes(existingNorm)) return true;
             
             const mappings = {
-                'supplierreference': ['supplier', 'vendor', 'manufacturer'],
-                'productmodel': ['model', 'modelno', 'modelnumber'],
-                'powerrating': ['power', 'wattage', 'watts'],
+                'supplierreference': ['supplier', 'supplierref', 'vendor', 'manufacturer'],
+                'productmodel': ['model', 'modelno', 'modelnumber', 'modelnumber'],
+                'powerrating': ['power', 'wattage', 'watts', 'watt'],
+                'powerwatts': ['power', 'wattage', 'watts', 'watt'],
                 'colortemperature': ['cct', 'temperature', 'kelvin'],
-                'physicaldimensions': ['dimensions', 'size', 'dimension'],
-                'ledchipbrand': ['led', 'chip', 'ledbrand'],
-                'driverbrand': ['driver'],
+                'physicaldimensions': ['dimensions', 'size', 'dimension', 'productsize'],
+                'ledchipbrand': ['led', 'chip', 'ledbrand', 'ledbrand'],
+                'driverbrand': ['driver', 'driverbrand'],
                 'diffusertype': ['diffuser', 'lens'],
                 'housingmaterial': ['housing', 'material'],
                 'dimmingcontrol': ['dimming', 'control'],
