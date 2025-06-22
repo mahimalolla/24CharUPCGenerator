@@ -1032,12 +1032,20 @@
             }
             
             encodeEmergency(value) {
+                // Handle different emergency backup text formats
+                if (value.toString().toLowerCase().includes('no')) {
+                    return 'N'; // No Emergency Backup → N
+                } else if (value.toString().toLowerCase().includes('emergency')) {
+                    return 'E'; // Emergency Backup → E
+                }
                 return value.toString().charAt(0).toUpperCase();
             }
             
             // NEW: Encode mounting frame
             encodeMounting(value) {
-                const num = parseInt(value);
+                // Extract first character from values like "X - Others" or "1 - Dampa"
+                const mounting = value.toString().split(' ')[0].charAt(0).toUpperCase();
+                const num = parseInt(mounting);
                 if (!isNaN(num)) {
                     if (num <= 9) {
                         return num.toString();
@@ -1045,7 +1053,7 @@
                         return String.fromCharCode(65 + (num - 10)); // A, B, C...
                     }
                 }
-                return value.toString().charAt(0).toUpperCase();
+                return mounting;
             }
         }
         
@@ -1898,11 +1906,14 @@
                     const fieldName = mapPositionToField(position);
                     if (fieldName) {
                         formData[fieldName] = select.value;
+                        console.log(`🔧 Mapping position ${position} (${upcConfig[position].label}) → ${fieldName} = ${select.value}`);
                     }
                 }
             });
             
+            console.log('🎯 Form data for encoding:', formData);
             const code = upcEncoder.encode(formData);
+            console.log('🎯 Generated code:', code);
             document.getElementById('generatedCode').textContent = code;
         }
         
