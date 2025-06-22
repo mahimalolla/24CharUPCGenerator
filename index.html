@@ -1906,22 +1906,22 @@
             document.getElementById('generatedCode').textContent = code;
         }
         
-        // UPDATED: Map UPC config positions to encoder field names (INCLUDING MOUNTING FRAME)
+        // UPDATED: Map UPC config positions to encoder field names - CORRECTED MAPPING
         function mapPositionToField(position) {
             const mapping = {
-                '1': 'supplier',    // Position 2-3: 1, 10, 11, 12 (no leading zeros for single digits)
-                '3': 'model',       // Position 4-7: ELPN, EWPN
-                '7': 'wattage',     // Position 9-11: 6, 100, 15K (no leading zeros)
-                '10': 'cct',        // Position 12-13: 27, 40, 65
-                '12': 'size',       // Position 15-16: 1, 10, 11, 12 (no leading zeros for single digits)
-                '14': 'led',        // Position 18-19: 1, 10, 98, 99 (no leading zeros for single digits)
-                '16': 'driver',     // Position 21: 1, A, B, C (single character now)
-                '18': 'diffuser',   // Position 22: 1, A, B, C
-                '19': 'housing',    // Position 23: 1, A, B, C
-                '20': 'dimming',    // Not used in current layout
-                '21': 'ip',         // Not used in current layout
-                '23': 'emergency',  // Not used in current layout
-                '24': 'mounting'    // Position 24: 1, 2, 3, A, B, C, X - ADDED MOUNTING FRAME
+                '1': 'supplier',    // Position 2: 1 (single char)
+                '3': 'model',       // Position 3-6: ELPN (4 chars)
+                '7': 'wattage',     // Position 8-9: 32 (2 chars)
+                '10': 'cct',        // Position 10-11: 40 (2 chars)
+                '12': 'size',       // Position 13: 1 (single char)
+                '14': 'led',        // Position 15: 1 (single char)
+                '16': 'driver',     // Position 17: 6 (single char)
+                '18': 'diffuser',   // Position 18: 1 (single char)
+                '19': 'housing',    // Position 19: 2 (single char)
+                '20': 'dimming',    // Position 20: S (single char)
+                '21': 'ip',         // Position 21-22: 44 (2 chars - FIXED!)
+                '23': 'emergency',  // Position 23: N (single char)
+                '24': 'mounting'    // Position 24: X (single char)
             };
             return mapping[position] || null;
         }
