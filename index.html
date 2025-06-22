@@ -1255,7 +1255,7 @@
             });
         }
         
-        // Parse Excel workbook - ENHANCED VERSION for complex structures
+        // Parse Excel workbook - ENHANCED VERSION to combine numbers with descriptions
         function parseExcelWorkbook(workbook) {
             const parsedData = {};
             console.log('📊 Processing Excel workbook with sheets:', workbook.SheetNames);
@@ -1268,28 +1268,19 @@
                 const range = XLSX.utils.decode_range(worksheet['!ref']);
                 console.log(`📐 Sheet range:`, range);
                 
-                // Find the actual header row (look for non-empty cells in first few rows)
+                // Find the actual header row (look for "Supplier ref" or similar)
                 let headerRow = -1;
-                for (let row = 0; row <= 5; row++) {
-                    let hasData = false;
+                for (let row = 0; row <= 10; row++) {
                     for (let col = range.s.c; col <= range.e.c; col++) {
                         const cellAddress = XLSX.utils.encode_cell({r: row, c: col});
                         const cell = worksheet[cellAddress];
-                        if (cell && cell.v && cell.v.toString().trim() !== '') {
-                            hasData = true;
-                            break;
-                        }
-                    }
-                    if (hasData) {
-                        // Check if this looks like a header row
-                        const firstCellAddress = XLSX.utils.encode_cell({r: row, c: range.s.c});
-                        const firstCell = worksheet[firstCellAddress];
-                        if (firstCell && firstCell.v && firstCell.v.toString().toLowerCase().includes('supplier')) {
+                        if (cell && cell.v && cell.v.toString().toLowerCase().includes('supplier')) {
                             headerRow = row;
                             console.log(`📋 Found header row at: ${row}`);
                             break;
                         }
                     }
+                    if (headerRow !== -1) break;
                 }
                 
                 if (headerRow === -1) {
@@ -1309,32 +1300,107 @@
                 
                 console.log('📋 Headers found:', headers);
                 
-                // Extract data starting from the row after headers
+                // Create a lookup table from the left side of the sheet (supplier names)
+                const supplierLookup = {};
+                const ledLookup = {};
+                const driverLookup = {};
+                
+                // Extract lookup data from the left columns (starting from around row 7)
+                for (let row = 6; row <= range.e.r; row++) {
+                    // Column A should have supplier numbers, Column B should have names
+                    const numCellA = worksheet[XLSX.utils.encode_cell({r: row, c: 0})]; // Column A
+                    const nameCellB = worksheet[XLSX.utils.encode_cell({r: row, c: 1})]; // Column B
+                    
+                    if (numCellA && nameCellB && numCellA.v && nameCellB.v) {
+                        const num = numCellA.v.toString().trim();
+                        const name = nameCellB.v.toString().trim();
+                        
+                        // Only add if it looks like a number-name pair
+                        if (/^\d+$/.test(num) && name && !name.match(/^\d+$/)) {
+                            supplierLookup[num] = name;
+                            console.log(`📝 Supplier lookup: ${num} → ${name}`);
+                        }
+                    }
+                }
+                
+                // Extract data for each column
                 for (let col = range.s.c; col <= range.e.c; col++) {
                     const header = headers[col];
                     if (!header || header === '') continue;
                     
                     console.log(`📝 Processing column: ${header}`);
                     const values = [];
+                    const uniqueValues = new Set();
                     
-                    // Read all data in this column
+                    // Read all data in this column starting from data rows
                     for (let row = headerRow + 1; row <= range.e.r; row++) {
                         const cellAddress = XLSX.utils.encode_cell({r: row, c: col});
                         const cell = worksheet[cellAddress];
                         if (cell && cell.v !== undefined && cell.v !== null) {
-                            const cellValue = cell.v.toString().trim();
-                            if (cellValue !== '' && !values.some(v => v.value === cellValue)) {
+                            let cellValue = cell.v.toString().trim();
+                            if (cellValue !== '' && !uniqueValues.has(cellValue)) {
+                                uniqueValues.add(cellValue);
+                                
+                                // Check if this is a column that needs number-description combination
+                                let displayText = cellValue;
+                                let valueForCode = cellValue;
+                                
+                                if (header.toLowerCase().includes('supplier') && supplierLookup[cellValue]) {
+                                    displayText = `${cellValue} - ${supplierLookup[cellValue]}`;
+                                    valueForCode = cellValue; // Keep number for code generation
+                                } else if (header.toLowerCase().includes('diffuser') && cellValue.includes(' - ')) {
+                                    // Already formatted like "1 - Opal"
+                                    displayText = cellValue;
+                                    valueForCode = cellValue.split(' - ')[0]; // Extract number for code
+                                } else if (header.toLowerCase().includes('housing') && cellValue.includes('- ')) {
+                                    // Already formatted like "1- Black"
+                                    displayText = cellValue.replace('- ', ' - '); // Normalize spacing
+                                    valueForCode = cellValue.split('-')[0].trim(); // Extract number for code
+                                } else if (header.toLowerCase().includes('led') && /^\d+$/.test(cellValue)) {
+                                    // LED brand - try to find description
+                                    const ledDescriptions = {
+                                        '1': 'Lumiled', '2': 'Osram', '3': 'Seoul', '4': 'Samsung', 
+                                        '5': 'CREE', '6': 'Edison', '7': 'Everlite', '8': 'Ecoon',
+                                        '9': 'Others', '10': 'Tube rod', '98': 'Tube rod', '99': 'Others'
+                                    };
+                                    if (ledDescriptions[cellValue]) {
+                                        displayText = `${cellValue} - ${ledDescriptions[cellValue]}`;
+                                    }
+                                    valueForCode = cellValue;
+                                } else if (header.toLowerCase().includes('driver') && /^\d+$/.test(cellValue)) {
+                                    // Driver brand - try to find description
+                                    const driverDescriptions = {
+                                        '1': 'Tridonic', '2': 'Philips', '3': 'VS', '4': 'TCI', 
+                                        '5': 'MW', '6': 'ELF', '7': 'Inventronics', '8': 'Eaglerise',
+                                        '9': 'Boke', '10': 'Lifud', '11': 'Bright', '12': 'Osram', '13': 'One Electronic'
+                                    };
+                                    if (driverDescriptions[cellValue]) {
+                                        displayText = `${cellValue} - ${driverDescriptions[cellValue]}`;
+                                    }
+                                    valueForCode = cellValue;
+                                }
+                                
                                 values.push({
-                                    value: cellValue,
-                                    text: cellValue
+                                    value: valueForCode,
+                                    text: displayText
                                 });
-                                console.log(`  ✓ Added value: ${cellValue}`);
+                                console.log(`  ✓ Added: ${valueForCode} → ${displayText}`);
                             }
                         }
                     }
                     
                     if (values.length > 0) {
-                        // Add default "Select" option
+                        // Sort values by numeric value if they're numbers
+                        values.sort((a, b) => {
+                            const numA = parseInt(a.value);
+                            const numB = parseInt(b.value);
+                            if (!isNaN(numA) && !isNaN(numB)) {
+                                return numA - numB;
+                            }
+                            return a.text.localeCompare(b.text);
+                        });
+                        
+                        // Add default "Select" option at the beginning
                         values.unshift({
                             value: "",
                             text: `Select ${header}`
