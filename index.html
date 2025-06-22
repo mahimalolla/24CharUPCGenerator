@@ -1353,6 +1353,13 @@
             return new Promise(resolve => {
                 requestAnimationFrame(() => {
                     reinitializeForm();
+                    
+                    // Debug: Show final configuration
+                    console.log('📋 Final UPC Configuration after Excel processing:');
+                    Object.entries(upcConfig).forEach(([position, config]) => {
+                        console.log(`Position ${position} (${config.label}):`, config.options.slice(0, 10).map(o => o.text));
+                    });
+                    
                     resolve();
                 });
             });
@@ -1377,40 +1384,54 @@
             updateCode();
         }
         
-        // Check if two category names are similar
+        // Check if two category names are similar - ENHANCED VERSION
         function isSimilarCategory(existing, excel) {
             const normalize = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
             const existingNorm = normalize(existing);
             const excelNorm = normalize(excel);
             
-            if (existingNorm === excelNorm) return true;
-            if (existingNorm.includes(excelNorm) || excelNorm.includes(existingNorm)) return true;
+            console.log(`🔍 Checking match: "${existing}" (${existingNorm}) vs "${excel}" (${excelNorm})`);
             
-            const mappings = {
-                'supplierreference': ['supplier', 'supplierref', 'vendor', 'manufacturer'],
-                'productmodel': ['model', 'modelno', 'modelnumber', 'modelnumber'],
-                'powerrating': ['power', 'wattage', 'watts', 'watt'],
-                'powerwatts': ['power', 'wattage', 'watts', 'watt'],
-                'colortemperature': ['cct', 'temperature', 'kelvin'],
-                'physicaldimensions': ['dimensions', 'size', 'dimension', 'productsize'],
-                'ledchipbrand': ['led', 'chip', 'ledbrand', 'ledbrand'],
-                'driverbrand': ['driver', 'driverbrand'],
-                'diffusertype': ['diffuser', 'lens'],
-                'housingmaterial': ['housing', 'material'],
-                'dimmingcontrol': ['dimming', 'control'],
-                'ipprotectionrating': ['ip', 'rating', 'protection'],
-                'emergencybackup': ['emergency', 'backup'],
-                'mountingframe': ['mounting', 'frame', 'mount']
+            // Direct exact matches
+            if (existingNorm === excelNorm) {
+                console.log(`✅ Exact match found!`);
+                return true;
+            }
+            
+            // Contains matches
+            if (existingNorm.includes(excelNorm) || excelNorm.includes(existingNorm)) {
+                console.log(`✅ Contains match found!`);
+                return true;
+            }
+            
+            // Specific mapping for your Excel columns
+            const specificMappings = {
+                'Power Rating (Watts)': ['wattage', 'watts', 'watt', 'power'],
+                'Supplier Reference': ['supplierref', 'supplier', 'vendor'],
+                'Product Model': ['modelnumber', 'model'],
+                'Color Temperature (CCT)': ['cct', 'colortemp', 'temperature'],
+                'Physical Dimensions': ['productsize', 'size', 'dimensions'],
+                'LED Chip Brand': ['ledbrand', 'led'],
+                'Driver Brand': ['driverbrand', 'driver'],
+                'Diffuser Type': ['diffuser'],
+                'Housing Material': ['housing'],
+                'Dimming Control': ['dimming'],
+                'IP Protection Rating': ['ip', 'rating'],
+                'Emergency Backup': ['emergency'],
+                'Mounting Frame': ['mounting', 'frame']
             };
             
-            for (const [key, alternatives] of Object.entries(mappings)) {
-                if (existingNorm.includes(key) || key.includes(existingNorm)) {
-                    if (alternatives.some(alt => excelNorm.includes(alt))) {
+            // Check specific mappings
+            for (const [configLabel, excelVariants] of Object.entries(specificMappings)) {
+                if (normalize(configLabel) === existingNorm) {
+                    if (excelVariants.some(variant => excelNorm.includes(variant) || variant.includes(excelNorm))) {
+                        console.log(`✅ Specific mapping match: ${configLabel} matches ${excel}`);
                         return true;
                     }
                 }
             }
             
+            console.log(`❌ No match found`);
             return false;
         }
         
@@ -2038,6 +2059,30 @@
                 toast.classList.remove('show');
             }, 4000);
         }
+        
+        // Manual debug function - can be called from console
+        window.debugExcelProcessing = function() {
+            console.log('🔧 Debug: Current Excel Data:', window.excelData);
+            console.log('🔧 Debug: Current UPC Config:', upcConfig);
+            
+            if (window.excelData && window.excelData.Wattage) {
+                console.log('🔧 Force replacing Power Rating with Wattage data...');
+                const wattageOptions = [
+                    { value: "", text: "Select Power Rating" },
+                    ...window.excelData.Wattage.options.slice(1)
+                ];
+                
+                upcConfig[7] = {
+                    ...upcConfig[7],
+                    options: wattageOptions
+                };
+                
+                reinitializeForm();
+                console.log('✅ Power Rating forcefully updated!');
+            } else {
+                console.log('❌ No Wattage data found in Excel');
+            }
+        };
         
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', function() {
