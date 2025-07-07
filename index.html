@@ -1263,7 +1263,7 @@
             });
         }
         
-        // Parse Excel workbook - ENHANCED VERSION to combine numbers with descriptions
+        // Parse Excel workbook - EXACT VALUES ONLY (no modifications)
         function parseExcelWorkbook(workbook) {
             const parsedData = {};
             console.log('📊 Processing Excel workbook with sheets:', workbook.SheetNames);
@@ -1276,7 +1276,7 @@
                 const range = XLSX.utils.decode_range(worksheet['!ref']);
                 console.log(`📐 Sheet range:`, range);
                 
-                // Find the actual header row (look for "Supplier ref" or similar)
+                // Find the header row - look for "Supplier ref"
                 let headerRow = -1;
                 for (let row = 0; row <= 10; row++) {
                     for (let col = range.s.c; col <= range.e.c; col++) {
@@ -1308,30 +1308,7 @@
                 
                 console.log('📋 Headers found:', headers);
                 
-                // Create a lookup table from the left side of the sheet (supplier names)
-                const supplierLookup = {};
-                const ledLookup = {};
-                const driverLookup = {};
-                
-                // Extract lookup data from the left columns (starting from around row 7)
-                for (let row = 6; row <= range.e.r; row++) {
-                    // Column A should have supplier numbers, Column B should have names
-                    const numCellA = worksheet[XLSX.utils.encode_cell({r: row, c: 0})]; // Column A
-                    const nameCellB = worksheet[XLSX.utils.encode_cell({r: row, c: 1})]; // Column B
-                    
-                    if (numCellA && nameCellB && numCellA.v && nameCellB.v) {
-                        const num = numCellA.v.toString().trim();
-                        const name = nameCellB.v.toString().trim();
-                        
-                        // Only add if it looks like a number-name pair
-                        if (/^\d+$/.test(num) && name && !name.match(/^\d+$/)) {
-                            supplierLookup[num] = name;
-                            console.log(`📝 Supplier lookup: ${num} → ${name}`);
-                        }
-                    }
-                }
-                
-                // Extract data for each column
+                // Process each column - READ EXACT VALUES ONLY
                 for (let col = range.s.c; col <= range.e.c; col++) {
                     const header = headers[col];
                     if (!header || header === '') continue;
@@ -1349,62 +1326,51 @@
                             if (cellValue !== '' && !uniqueValues.has(cellValue)) {
                                 uniqueValues.add(cellValue);
                                 
-                                // Check if this is a column that needs number-description combination
-                                let displayText = cellValue;
+                                // Extract just the first part (number/letter) for code generation
                                 let valueForCode = cellValue;
                                 
-                                if (header.toLowerCase().includes('supplier') && supplierLookup[cellValue]) {
-                                    displayText = `${cellValue} - ${supplierLookup[cellValue]}`;
-                                    valueForCode = cellValue; // Keep number for code generation
-                                } else if (header.toLowerCase().includes('diffuser') && cellValue.includes(' - ')) {
-                                    // Already formatted like "1 - Opal"
-                                    displayText = cellValue;
-                                    valueForCode = cellValue.split(' - ')[0]; // Extract number for code
-                                } else if (header.toLowerCase().includes('housing') && cellValue.includes('- ')) {
-                                    // Already formatted like "1- Black"
-                                    displayText = cellValue.replace('- ', ' - '); // Normalize spacing
-                                    valueForCode = cellValue.split('-')[0].trim(); // Extract number for code
-                                } else if (header.toLowerCase().includes('led') && /^\d+$/.test(cellValue)) {
-                                    // LED brand - try to find description
-                                    const ledDescriptions = {
-                                        '1': 'Lumiled', '2': 'Osram', '3': 'Seoul', '4': 'Samsung', 
-                                        '5': 'CREE', '6': 'Edison', '7': 'Everlite', '8': 'Ecoon',
-                                        '9': 'Others', '10': 'Tube rod', '98': 'Tube rod', '99': 'Others'
-                                    };
-                                    if (ledDescriptions[cellValue]) {
-                                        displayText = `${cellValue} - ${ledDescriptions[cellValue]}`;
-                                    }
-                                    valueForCode = cellValue;
-                                } else if (header.toLowerCase().includes('driver') && /^\d+$/.test(cellValue)) {
-                                    // Driver brand - try to find description
-                                    const driverDescriptions = {
-                                        '1': 'Tridonic', '2': 'Philips', '3': 'VS', '4': 'TCI', 
-                                        '5': 'MW', '6': 'ELF', '7': 'Inventronics', '8': 'Eaglerise',
-                                        '9': 'Boke', '10': 'Lifud', '11': 'Bright', '12': 'Osram', '13': 'One Electronic'
-                                    };
-                                    if (driverDescriptions[cellValue]) {
-                                        displayText = `${cellValue} - ${driverDescriptions[cellValue]}`;
-                                    }
-                                    valueForCode = cellValue;
+                                // For entries like "1 - Opal" or "1- Black", extract the "1"
+                                if (cellValue.includes(' - ') || cellValue.includes('- ')) {
+                                    valueForCode = cellValue.split(/\s*-\s*/)[0].trim();
+                                }
+                                // For entries like "S - STD On/Off", extract the "S"
+                                else if (cellValue.match(/^[A-Z]\s*-/)) {
+                                    valueForCode = cellValue.charAt(0);
+                                }
+                                // For entries like "E -Emg", extract the "E"
+                                else if (cellValue.match(/^[A-Z]\s*-/)) {
+                                    valueForCode = cellValue.charAt(0);
                                 }
                                 
                                 values.push({
                                     value: valueForCode,
-                                    text: displayText
+                                    text: cellValue  // Keep EXACT text as it appears in Excel
                                 });
-                                console.log(`  ✓ Added: ${valueForCode} → ${displayText}`);
+                                
+                                console.log(`  ✓ Added: ${valueForCode} → ${cellValue}`);
                             }
                         }
                     }
                     
                     if (values.length > 0) {
-                        // Sort values by numeric value if they're numbers
+                        // Sort values - numbers first, then letters
                         values.sort((a, b) => {
                             const numA = parseInt(a.value);
                             const numB = parseInt(b.value);
+                            
+                            // Both are numbers
                             if (!isNaN(numA) && !isNaN(numB)) {
                                 return numA - numB;
                             }
+                            // A is number, B is not
+                            if (!isNaN(numA) && isNaN(numB)) {
+                                return -1;
+                            }
+                            // A is not number, B is number
+                            if (isNaN(numA) && !isNaN(numB)) {
+                                return 1;
+                            }
+                            // Both are text
                             return a.text.localeCompare(b.text);
                         });
                         
@@ -1421,6 +1387,7 @@
                         };
                         
                         console.log(`✅ Column "${header}" processed with ${values.length - 1} values`);
+                        console.log(`📋 First 5 options:`, values.slice(1, 6).map(v => v.text));
                     }
                 }
             });
@@ -1900,39 +1867,160 @@
         function updateCode() {
             const formData = {};
             
+            console.log('🔧 === FORM DATA COLLECTION ===');
             Object.keys(upcConfig).forEach(position => {
                 const select = document.getElementById(`pos${position}`);
                 if (select && select.value !== '') {
                     const fieldName = mapPositionToField(position);
                     if (fieldName) {
                         formData[fieldName] = select.value;
-                        console.log(`🔧 Mapping position ${position} (${upcConfig[position].label}) → ${fieldName} = ${select.value}`);
+                        console.log(`🔧 Position ${position} (${upcConfig[position].label}) → Field: ${fieldName} = "${select.value}"`);
+                    } else {
+                        console.log(`❌ Position ${position} (${upcConfig[position].label}) → NO MAPPING FOUND`);
                     }
+                } else {
+                    console.log(`⚪ Position ${position} (${upcConfig[position].label}) → Empty/Not Selected`);
                 }
             });
             
-            console.log('🎯 Form data for encoding:', formData);
-            const code = upcEncoder.encode(formData);
-            console.log('🎯 Generated code:', code);
+            console.log('🎯 Final formData object:', formData);
+            
+            // FORCE the correct encoding - bypass any old encoder
+            console.log('🔧 === MANUAL ENCODING ===');
+            let code = '';
+            
+            // Position 0: X (always)
+            code += 'X';
+            console.log('Step 0: X → Code so far: "' + code + '"');
+            
+            // Position 1: Supplier (1 char)
+            const supplier = formData.supplier || 'X';
+            code += supplier;
+            console.log('Step 1: Supplier "' + supplier + '" → Code so far: "' + code + '"');
+            
+            // Position 2-5: Model (4 chars)
+            let model = 'XXXX';
+            if (formData.model) {
+                model = formData.model.toString().toUpperCase().padEnd(4, 'X').substring(0, 4);
+            }
+            code += model;
+            console.log('Step 2-5: Model "' + model + '" → Code so far: "' + code + '"');
+            
+            // Position 6: X (always)
+            code += 'X';
+            console.log('Step 6: X → Code so far: "' + code + '"');
+            
+            // Position 7-8: Wattage (2 chars)
+            let wattage = 'XX';
+            if (formData.wattage) {
+                const watt = parseInt(formData.wattage.toString().replace(/[^\d]/g, ''));
+                if (!isNaN(watt)) {
+                    if (watt < 10) {
+                        wattage = '0' + watt.toString();
+                    } else {
+                        wattage = watt.toString().substring(0, 2);
+                    }
+                }
+            }
+            code += wattage;
+            console.log('Step 7-8: Wattage "' + wattage + '" → Code so far: "' + code + '"');
+            
+            // Position 9-10: CCT (2 chars)
+            let cct = 'XX';
+            if (formData.cct) {
+                cct = formData.cct.toString().padEnd(2, '0').substring(0, 2);
+            }
+            code += cct;
+            console.log('Step 9-10: CCT "' + cct + '" → Code so far: "' + code + '"');
+            
+            // Position 11: X (always)
+            code += 'X';
+            console.log('Step 11: X → Code so far: "' + code + '"');
+            
+            // Position 12: Size (1 char)
+            const size = formData.size || 'X';
+            code += size;
+            console.log('Step 12: Size "' + size + '" → Code so far: "' + code + '"');
+            
+            // Position 13: X (always)
+            code += 'X';
+            console.log('Step 13: X → Code so far: "' + code + '"');
+            
+            // Position 14: LED (1 char)
+            const led = formData.led || 'X';
+            code += led;
+            console.log('Step 14: LED "' + led + '" → Code so far: "' + code + '"');
+            
+            // Position 15: X (always)
+            code += 'X';
+            console.log('Step 15: X → Code so far: "' + code + '"');
+            
+            // Position 16: Driver (1 char)
+            const driver = formData.driver || 'X';
+            code += driver;
+            console.log('Step 16: Driver "' + driver + '" → Code so far: "' + code + '"');
+            
+            // Position 17: Diffuser (1 char)
+            const diffuser = formData.diffuser || 'X';
+            code += diffuser;
+            console.log('Step 17: Diffuser "' + diffuser + '" → Code so far: "' + code + '"');
+            
+            // Position 18: Housing (1 char)
+            const housing = formData.housing || 'X';
+            code += housing;
+            console.log('Step 18: Housing "' + housing + '" → Code so far: "' + code + '"');
+            
+            // Position 19: Dimming (1 char)
+            const dimming = formData.dimming || 'X';
+            code += dimming;
+            console.log('Step 19: Dimming "' + dimming + '" → Code so far: "' + code + '"');
+            
+            // Position 20-21: IP (2 chars)
+            let ip = 'XX';
+            if (formData.ip) {
+                const ipNum = formData.ip.toString().replace(/[^\d]/g, '');
+                if (ipNum.length === 1) {
+                    ip = ipNum + ipNum; // "4" becomes "44"
+                } else if (ipNum.length >= 2) {
+                    ip = ipNum.substring(0, 2);
+                }
+            }
+            code += ip;
+            console.log('Step 20-21: IP "' + ip + '" → Code so far: "' + code + '"');
+            
+            // Position 22: Emergency (1 char)
+            const emergency = formData.emergency || 'X';
+            code += emergency;
+            console.log('Step 22: Emergency "' + emergency + '" → Code so far: "' + code + '"');
+            
+            // Position 23: Mounting (1 char)
+            const mounting = formData.mounting || 'X';
+            code += mounting;
+            console.log('Step 23: Mounting "' + mounting + '" → Code so far: "' + code + '"');
+            
+            console.log('🎯 FINAL RESULT:', code, `(${code.length} chars)`);
+            console.log('🎯 EXPECTED:     X1ELPNX3240X1X1X612S44NX (24 chars)');
+            console.log('🎯 MATCH:', code === 'X1ELPNX3240X1X1X612S44NX' ? '✅ YES' : '❌ NO');
+            
             document.getElementById('generatedCode').textContent = code;
         }
         
-        // UPDATED: Map UPC config positions to encoder field names - CORRECTED MAPPING
+        // CORRECTED: Map UPC config positions to encoder field names
         function mapPositionToField(position) {
             const mapping = {
-                '1': 'supplier',    // Position 2: 1 (single char)
-                '3': 'model',       // Position 3-6: ELPN (4 chars)
-                '7': 'wattage',     // Position 8-9: 32 (2 chars)
-                '10': 'cct',        // Position 10-11: 40 (2 chars)
-                '12': 'size',       // Position 13: 1 (single char)
-                '14': 'led',        // Position 15: 1 (single char)
-                '16': 'driver',     // Position 17: 6 (single char)
-                '18': 'diffuser',   // Position 18: 1 (single char)
-                '19': 'housing',    // Position 19: 2 (single char)
-                '20': 'dimming',    // Position 20: S (single char)
-                '21': 'ip',         // Position 21-22: 44 (2 chars - FIXED!)
-                '23': 'emergency',  // Position 23: N (single char)
-                '24': 'mounting'    // Position 24: X (single char)
+                '1': 'supplier',    // Supplier Reference → supplier
+                '3': 'model',       // Product Model → model  
+                '7': 'wattage',     // Power Rating (Watts) → wattage
+                '10': 'cct',        // Color Temperature (CCT) → cct
+                '12': 'size',       // Physical Dimensions → size
+                '14': 'led',        // LED Chip Brand → led
+                '16': 'driver',     // Driver Brand → driver
+                '18': 'diffuser',   // Diffuser Type → diffuser
+                '19': 'housing',    // Housing Material → housing
+                '20': 'dimming',    // Dimming Control → dimming
+                '21': 'ip',         // IP Protection Rating → ip
+                '23': 'emergency',  // Emergency Backup → emergency
+                '24': 'mounting'    // Mounting Frame → mounting
             };
             return mapping[position] || null;
         }
