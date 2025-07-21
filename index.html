@@ -1863,7 +1863,7 @@
             updateCode();
         }
         
-        // Update the generated code using fixed-width encoder
+        // Update the generated code using fixed-width encoder - 24 CHARACTER VERSION
         function updateCode() {
             const formData = {};
             
@@ -1885,18 +1885,32 @@
             
             console.log('🎯 Final formData object:', formData);
             
-            // FORCE the correct encoding - bypass any old encoder
-            console.log('🔧 === MANUAL ENCODING ===');
+            // 24-CHARACTER ENCODING with letter encoding for 10+
+            console.log('🔧 === 24-CHARACTER ENCODING ===');
             let code = '';
             
             // Position 0: X (always)
             code += 'X';
             console.log('Step 0: X → Code so far: "' + code + '"');
             
-            // Position 1: Supplier (1 char)
-            const supplier = formData.supplier || 'X';
+            // Position 1: Supplier (1 char) - Use letters for 10+
+            let supplier = 'X';
+            if (formData.supplier) {
+                const num = parseInt(formData.supplier);
+                if (!isNaN(num)) {
+                    if (num <= 9) {
+                        supplier = num.toString(); // "1", "2", "3"...
+                    } else if (num <= 35) {
+                        supplier = String.fromCharCode(65 + (num - 10)); // 10→A, 11→B, 12→C
+                    } else {
+                        supplier = 'Z'; // Cap at Z
+                    }
+                } else {
+                    supplier = formData.supplier.toString().charAt(0).toUpperCase();
+                }
+            }
             code += supplier;
-            console.log('Step 1: Supplier "' + supplier + '" → Code so far: "' + code + '"');
+            console.log('Step 1: Supplier "' + supplier + '" (10+ = A,B,C...) → Code so far: "' + code + '"');
             
             // Position 2-5: Model (4 chars)
             let model = 'XXXX';
@@ -1910,15 +1924,30 @@
             code += 'X';
             console.log('Step 6: X → Code so far: "' + code + '"');
             
-            // Position 7-8: Wattage (2 chars)
+            // Position 7-8: Wattage (2 chars) - NO leading zeros for single digits
             let wattage = 'XX';
             if (formData.wattage) {
-                const watt = parseInt(formData.wattage.toString().replace(/[^\d]/g, ''));
-                if (!isNaN(watt)) {
-                    if (watt < 10) {
-                        wattage = '0' + watt.toString();
-                    } else {
-                        wattage = watt.toString().substring(0, 2);
+                const wattStr = formData.wattage.toString().toUpperCase();
+                if (wattStr.includes('1K') || wattStr === '1000') {
+                    wattage = '1K'; // Show the K
+                } else if (wattStr.includes('12K') || wattStr === '12000') {
+                    wattage = '12'; // 12K becomes 12
+                } else if (wattStr.includes('15K') || wattStr === '15000') {
+                    wattage = '15'; // 15K becomes 15
+                } else {
+                    const watt = parseInt(wattStr.replace(/[^\d]/g, ''));
+                    if (!isNaN(watt)) {
+                        if (watt <= 9) {
+                            wattage = watt.toString() + 'X'; // "6X", "7X" - NO leading zero
+                        } else if (watt < 100) {
+                            wattage = watt.toString(); // "32", "40"
+                        } else if (watt < 1000) {
+                            // For 100-999, show as two digits (100→10, 150→15, 200→20)
+                            wattage = Math.floor(watt / 10).toString().padStart(2, '0');
+                        } else {
+                            // For 1000+, use K notation
+                            wattage = Math.floor(watt / 1000).toString() + 'K';
+                        }
                     }
                 }
             }
@@ -1937,28 +1966,74 @@
             code += 'X';
             console.log('Step 11: X → Code so far: "' + code + '"');
             
-            // Position 12: Size (1 char)
-            const size = formData.size || 'X';
+            // Position 12: Size (1 char) - Use letters for 10+
+            let size = 'X';
+            if (formData.size) {
+                const num = parseInt(formData.size);
+                if (!isNaN(num)) {
+                    if (num <= 9) {
+                        size = num.toString(); // "1", "2", "3"...
+                    } else if (num <= 35) {
+                        size = String.fromCharCode(65 + (num - 10)); // 10→A, 11→B, 12→C
+                    } else {
+                        size = 'Z';
+                    }
+                } else {
+                    size = formData.size.toString().charAt(0).toUpperCase();
+                }
+            }
             code += size;
-            console.log('Step 12: Size "' + size + '" → Code so far: "' + code + '"');
+            console.log('Step 12: Size "' + size + '" (10+ = A,B,C...) → Code so far: "' + code + '"');
             
             // Position 13: X (always)
             code += 'X';
             console.log('Step 13: X → Code so far: "' + code + '"');
             
-            // Position 14: LED (1 char)
-            const led = formData.led || 'X';
+            // Position 14: LED (1 char) - Use letters for 10+, except 98,99
+            let led = 'X';
+            if (formData.led) {
+                const num = parseInt(formData.led);
+                if (!isNaN(num)) {
+                    if (num === 98) {
+                        led = '8'; // Special encoding for 98
+                    } else if (num === 99) {
+                        led = '9'; // Special encoding for 99
+                    } else if (num <= 9) {
+                        led = num.toString(); // "1", "2", "3"...
+                    } else if (num <= 35) {
+                        led = String.fromCharCode(65 + (num - 10)); // 10→A, 11→B
+                    } else {
+                        led = 'Z';
+                    }
+                } else {
+                    led = formData.led.toString().charAt(0).toUpperCase();
+                }
+            }
             code += led;
-            console.log('Step 14: LED "' + led + '" → Code so far: "' + code + '"');
+            console.log('Step 14: LED "' + led + '" (10+ = A,B,C..., 98=8, 99=9) → Code so far: "' + code + '"');
             
             // Position 15: X (always)
             code += 'X';
             console.log('Step 15: X → Code so far: "' + code + '"');
             
-            // Position 16: Driver (1 char)
-            const driver = formData.driver || 'X';
+            // Position 16: Driver (1 char) - Use letters for 10+
+            let driver = 'X';
+            if (formData.driver) {
+                const num = parseInt(formData.driver);
+                if (!isNaN(num)) {
+                    if (num <= 9) {
+                        driver = num.toString(); // "1", "2", "3"...
+                    } else if (num <= 35) {
+                        driver = String.fromCharCode(65 + (num - 10)); // 10→A, 11→B, 12→C
+                    } else {
+                        driver = 'Z';
+                    }
+                } else {
+                    driver = formData.driver.toString().charAt(0).toUpperCase();
+                }
+            }
             code += driver;
-            console.log('Step 16: Driver "' + driver + '" → Code so far: "' + code + '"');
+            console.log('Step 16: Driver "' + driver + '" (10+ = A,B,C...) → Code so far: "' + code + '"');
             
             // Position 17: Diffuser (1 char)
             const diffuser = formData.diffuser || 'X';
@@ -1999,8 +2074,8 @@
             console.log('Step 23: Mounting "' + mounting + '" → Code so far: "' + code + '"');
             
             console.log('🎯 FINAL RESULT:', code, `(${code.length} chars)`);
-            console.log('🎯 EXPECTED:     X1ELPNX3240X1X1X612S44NX (24 chars)');
-            console.log('🎯 MATCH:', code === 'X1ELPNX3240X1X1X612S44NX' ? '✅ YES' : '❌ NO');
+            console.log('🎯 24-CHAR STRUCTURE: X + Supplier(1) + Model(4) + X + Wattage(2) + CCT(2) + X + Size(1) + X + LED(1) + X + Driver(1) + Diffuser(1) + Housing(1) + Dimming(1) + IP(2) + Emergency(1) + Mounting(1)');
+            console.log('🎯 ENCODING: 1-9=digits, 10=A, 11=B, 12=C, etc.');
             
             document.getElementById('generatedCode').textContent = code;
         }
