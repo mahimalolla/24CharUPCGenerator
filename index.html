@@ -1863,7 +1863,7 @@
             updateCode();
         }
         
-        // Update the generated code using fixed-width encoder - 24 CHARACTER VERSION
+        // Update the generated code using fixed-width encoder
         function updateCode() {
             const formData = {};
             
@@ -1885,34 +1885,28 @@
             
             console.log('🎯 Final formData object:', formData);
             
-            // 24-CHARACTER ENCODING with letter encoding for 10+
-            console.log('🔧 === 24-CHARACTER ENCODING ===');
+            // DYNAMIC 24-CHARACTER ENCODING - X spacers get eaten by 2-digit values
+            console.log('🔧 === DYNAMIC ENCODING (24 chars) ===');
             let code = '';
             
             // Position 0: X (always)
             code += 'X';
             console.log('Step 0: X → Code so far: "' + code + '"');
             
-            // Position 1: Supplier (1 char) - Use letters for 10+
+            // Position 1: Supplier (1 char, but can expand into position 2 if 2-digit)
             let supplier = 'X';
             if (formData.supplier) {
                 const num = parseInt(formData.supplier);
                 if (!isNaN(num)) {
-                    if (num <= 9) {
-                        supplier = num.toString(); // "1", "2", "3"...
-                    } else if (num <= 35) {
-                        supplier = String.fromCharCode(65 + (num - 10)); // 10→A, 11→B, 12→C
-                    } else {
-                        supplier = 'Z'; // Cap at Z
-                    }
+                    supplier = num.toString();
                 } else {
-                    supplier = formData.supplier.toString().charAt(0).toUpperCase();
+                    supplier = formData.supplier.toString().charAt(0);
                 }
             }
             code += supplier;
-            console.log('Step 1: Supplier "' + supplier + '" (10+ = A,B,C...) → Code so far: "' + code + '"');
+            console.log('Step 1: Supplier "' + supplier + '" → Code so far: "' + code + '"');
             
-            // Position 2-5: Model (4 chars)
+            // Position 2-5: Model (4 chars) - but if supplier is 2-digit, model starts at pos 3
             let model = 'XXXX';
             if (formData.model) {
                 model = formData.model.toString().toUpperCase().padEnd(4, 'X').substring(0, 4);
@@ -1924,29 +1918,25 @@
             code += 'X';
             console.log('Step 6: X → Code so far: "' + code + '"');
             
-            // Position 7-8: Wattage (2 chars) - NO leading zeros for single digits
+            // Position 7-8: Wattage (2 chars)
             let wattage = 'XX';
             if (formData.wattage) {
                 const wattStr = formData.wattage.toString().toUpperCase();
                 if (wattStr.includes('1K') || wattStr === '1000') {
-                    wattage = '1K'; // Show the K
+                    wattage = '1K';
                 } else if (wattStr.includes('12K') || wattStr === '12000') {
-                    wattage = '12'; // 12K becomes 12
+                    wattage = '12';
                 } else if (wattStr.includes('15K') || wattStr === '15000') {
-                    wattage = '15'; // 15K becomes 15
+                    wattage = '15';
                 } else {
                     const watt = parseInt(wattStr.replace(/[^\d]/g, ''));
                     if (!isNaN(watt)) {
                         if (watt <= 9) {
-                            wattage = watt.toString() + 'X'; // "6X", "7X" - NO leading zero
+                            wattage = watt.toString() + 'X';
                         } else if (watt < 100) {
-                            wattage = watt.toString(); // "32", "40"
-                        } else if (watt < 1000) {
-                            // For 100-999, show as two digits (100→10, 150→15, 200→20)
-                            wattage = Math.floor(watt / 10).toString().padStart(2, '0');
+                            wattage = watt.toString();
                         } else {
-                            // For 1000+, use K notation
-                            wattage = Math.floor(watt / 1000).toString() + 'K';
+                            wattage = watt.toString().substring(0, 2);
                         }
                     }
                 }
@@ -1966,79 +1956,71 @@
             code += 'X';
             console.log('Step 11: X → Code so far: "' + code + '"');
             
-            // Position 12: Size (1 char) - Use letters for 10+
-            let size = 'X';
+            // Position 12-13: Size (1 char + dynamic X) - X gets eaten if size is 2-digit
+            let sizeSection = 'XX';
             if (formData.size) {
                 const num = parseInt(formData.size);
                 if (!isNaN(num)) {
                     if (num <= 9) {
-                        size = num.toString(); // "1", "2", "3"...
-                    } else if (num <= 35) {
-                        size = String.fromCharCode(65 + (num - 10)); // 10→A, 11→B, 12→C
+                        sizeSection = num.toString() + 'X'; // "1X"
                     } else {
-                        size = 'Z';
+                        sizeSection = num.toString().substring(0, 2); // "11" (eats the X)
                     }
                 } else {
-                    size = formData.size.toString().charAt(0).toUpperCase();
+                    sizeSection = formData.size.toString().charAt(0) + 'X';
                 }
             }
-            code += size;
-            console.log('Step 12: Size "' + size + '" (10+ = A,B,C...) → Code so far: "' + code + '"');
+            code += sizeSection;
+            console.log('Step 12-13: Size section "' + sizeSection + '" → Code so far: "' + code + '"');
             
-            // Position 13: X (always)
-            code += 'X';
-            console.log('Step 13: X → Code so far: "' + code + '"');
-            
-            // Position 14: LED (1 char) - Use letters for 10+, except 98,99
-            let led = 'X';
+            // Position 14-15: LED (1 char + dynamic X) - X gets eaten if LED is 2-digit  
+            let ledSection = 'XX';
             if (formData.led) {
                 const num = parseInt(formData.led);
                 if (!isNaN(num)) {
-                    if (num === 98) {
-                        led = '8'; // Special encoding for 98
-                    } else if (num === 99) {
-                        led = '9'; // Special encoding for 99
-                    } else if (num <= 9) {
-                        led = num.toString(); // "1", "2", "3"...
-                    } else if (num <= 35) {
-                        led = String.fromCharCode(65 + (num - 10)); // 10→A, 11→B
+                    if (num <= 9) {
+                        ledSection = num.toString() + 'X'; // "1X"
+                    } else if (num === 98 || num === 99) {
+                        ledSection = num.toString(); // "98", "99" (eats the X)
                     } else {
-                        led = 'Z';
+                        ledSection = num.toString().substring(0, 2); // "11" (eats the X)
                     }
                 } else {
-                    led = formData.led.toString().charAt(0).toUpperCase();
+                    ledSection = formData.led.toString().charAt(0) + 'X';
                 }
             }
-            code += led;
-            console.log('Step 14: LED "' + led + '" (10+ = A,B,C..., 98=8, 99=9) → Code so far: "' + code + '"');
+            code += ledSection;
+            console.log('Step 14-15: LED section "' + ledSection + '" → Code so far: "' + code + '"');
             
-            // Position 15: X (always)
-            code += 'X';
-            console.log('Step 15: X → Code so far: "' + code + '"');
-            
-            // Position 16: Driver (1 char) - Use letters for 10+
+            // Position 16: Driver (1 char, but if 2-digit, second digit eats the following X)
             let driver = 'X';
+            let driverOverflow = ''; // Second digit that will eat the next X
             if (formData.driver) {
                 const num = parseInt(formData.driver);
                 if (!isNaN(num)) {
                     if (num <= 9) {
-                        driver = num.toString(); // "1", "2", "3"...
-                    } else if (num <= 35) {
-                        driver = String.fromCharCode(65 + (num - 10)); // 10→A, 11→B, 12→C
+                        driver = num.toString(); // "6"
+                        driverOverflow = ''; // No overflow
                     } else {
-                        driver = 'Z';
+                        driver = num.toString().substring(0, 1); // First digit "1"
+                        driverOverflow = num.toString().substring(1, 2); // Second digit "1"
                     }
                 } else {
-                    driver = formData.driver.toString().charAt(0).toUpperCase();
+                    driver = formData.driver.toString().charAt(0);
                 }
             }
             code += driver;
-            console.log('Step 16: Driver "' + driver + '" (10+ = A,B,C...) → Code so far: "' + code + '"');
+            console.log('Step 16: Driver "' + driver + '" (overflow: "' + driverOverflow + '") → Code so far: "' + code + '"');
             
-            // Position 17: Diffuser (1 char)
-            const diffuser = formData.diffuser || 'X';
+            // Position 17: Diffuser (1 char) - but gets replaced by driver overflow if exists
+            let diffuser = formData.diffuser || 'X';
+            if (driverOverflow) {
+                diffuser = driverOverflow; // Driver's second digit eats this position
+                console.log('Step 17: Driver overflow "' + driverOverflow + '" replaces diffuser → Code so far: "' + code + driverOverflow + '"');
+            } else {
+                console.log('Step 17: Diffuser "' + diffuser + '" → Code so far: "' + code + diffuser + '"');
+            }
             code += diffuser;
-            console.log('Step 17: Diffuser "' + diffuser + '" → Code so far: "' + code + '"');
             
             // Position 18: Housing (1 char)
             const housing = formData.housing || 'X';
@@ -2050,14 +2032,17 @@
             code += dimming;
             console.log('Step 19: Dimming "' + dimming + '" → Code so far: "' + code + '"');
             
-            // Position 20-21: IP (2 chars)
+            // Position 20-21: IP (2 chars) - Single digit gets duplicated, double digit stays as-is
             let ip = 'XX';
             if (formData.ip) {
                 const ipNum = formData.ip.toString().replace(/[^\d]/g, '');
+                console.log('🔧 IP raw value: "' + formData.ip + '" → extracted digits: "' + ipNum + '"');
                 if (ipNum.length === 1) {
                     ip = ipNum + ipNum; // "4" becomes "44"
+                    console.log('🔧 Single digit IP: "' + ipNum + '" → "' + ip + '" (duplicated)');
                 } else if (ipNum.length >= 2) {
-                    ip = ipNum.substring(0, 2);
+                    ip = ipNum.substring(0, 2); // "65" stays "65", "654" becomes "65"
+                    console.log('🔧 Multi-digit IP: "' + ipNum + '" → "' + ip + '" (first 2 digits)');
                 }
             }
             code += ip;
@@ -2074,8 +2059,10 @@
             console.log('Step 23: Mounting "' + mounting + '" → Code so far: "' + code + '"');
             
             console.log('🎯 FINAL RESULT:', code, `(${code.length} chars)`);
-            console.log('🎯 24-CHAR STRUCTURE: X + Supplier(1) + Model(4) + X + Wattage(2) + CCT(2) + X + Size(1) + X + LED(1) + X + Driver(1) + Diffuser(1) + Housing(1) + Dimming(1) + IP(2) + Emergency(1) + Mounting(1)');
-            console.log('🎯 ENCODING: 1-9=digits, 10=A, 11=B, 12=C, etc.');
+            console.log('🎯 DYNAMIC STRUCTURE: X spacers get eaten by 2-digit values');
+            console.log('🎯 Examples:');
+            console.log('  - Driver 6: ...X6... (X spacer remains)');
+            console.log('  - Driver 11: ...11... (second digit eats the X)');
             
             document.getElementById('generatedCode').textContent = code;
         }
