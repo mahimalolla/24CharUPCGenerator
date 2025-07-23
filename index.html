@@ -1944,73 +1944,101 @@
             code += wattage;
             console.log('Step 7-8: Wattage "' + wattage + '" → Code so far: "' + code + '"');
             
-            // Position 9-10: CCT (2 chars)
+            // Position 9-10: CCT (2 chars) - Handle both numeric and text values
             let cct = 'XX';
             if (formData.cct) {
-                cct = formData.cct.toString().padEnd(2, '0').substring(0, 2);
+                const cctStr = formData.cct.toString();
+                console.log('🔧 CCT raw value: "' + cctStr + '"');
+                
+                // Check if it starts with "GC" (Green Color)
+                if (cctStr.toUpperCase().includes('GC') || cctStr.toLowerCase().includes('green')) {
+                    cct = 'GC'; // Keep as GC for Green Color
+                    console.log('🔧 Green Color CCT: "' + cctStr + '" → "GC"');
+                } else {
+                    // Extract numeric value
+                    const numMatch = cctStr.match(/\d+/);
+                    if (numMatch) {
+                        const num = numMatch[0];
+                        cct = num.padEnd(2, '0').substring(0, 2);
+                        console.log('🔧 Numeric CCT: "' + cctStr + '" → "' + cct + '"');
+                    } else {
+                        // If no number found, take first 2 characters
+                        cct = cctStr.substring(0, 2).toUpperCase();
+                        console.log('🔧 Text CCT: "' + cctStr + '" → "' + cct + '"');
+                    }
+                }
             }
             code += cct;
             console.log('Step 9-10: CCT "' + cct + '" → Code so far: "' + code + '"');
             
-            // Position 11: X (always)
-            code += 'X';
-            console.log('Step 11: X → Code so far: "' + code + '"');
-            
-            // Position 12-13: Size (1 char + dynamic X) - X gets eaten if size is 2-digit
+            // Position 11-12: Size section (1 char + dynamic X) - X gets eaten if size is 2-digit
             let sizeSection = 'XX';
             if (formData.size) {
                 const num = parseInt(formData.size);
+                console.log('🔧 Size raw value: "' + formData.size + '" → parsed: ' + num);
                 if (!isNaN(num)) {
                     if (num <= 9) {
-                        sizeSection = num.toString() + 'X'; // "1X"
+                        sizeSection = 'X' + num.toString(); // "X1" (spacer + single digit)
+                        console.log('🔧 Single digit size: X + ' + num + ' = "' + sizeSection + '"');
                     } else {
-                        sizeSection = num.toString().substring(0, 2); // "11" (eats the X)
+                        sizeSection = num.toString().substring(0, 2); // "13" (2 digits eat the spacer)
+                        console.log('🔧 Double digit size: "' + num + '" → "' + sizeSection + '" (eats spacer)');
                     }
                 } else {
-                    sizeSection = formData.size.toString().charAt(0) + 'X';
+                    sizeSection = 'X' + formData.size.toString().charAt(0);
+                    console.log('🔧 Text size: X + first char = "' + sizeSection + '"');
                 }
             }
             code += sizeSection;
-            console.log('Step 12-13: Size section "' + sizeSection + '" → Code so far: "' + code + '"');
+            console.log('Step 11-12: Size section "' + sizeSection + '" → Code so far: "' + code + '"');
             
-            // Position 14-15: LED (1 char + dynamic X) - X gets eaten if LED is 2-digit  
+            // Position 13-14: LED section (1 char + dynamic X) - X gets eaten if LED is 2-digit  
             let ledSection = 'XX';
             if (formData.led) {
                 const num = parseInt(formData.led);
+                console.log('🔧 LED raw value: "' + formData.led + '" → parsed: ' + num);
                 if (!isNaN(num)) {
                     if (num <= 9) {
-                        ledSection = num.toString() + 'X'; // "1X"
+                        ledSection = 'X' + num.toString(); // "X1" (spacer + single digit)
+                        console.log('🔧 Single digit LED: X + ' + num + ' = "' + ledSection + '"');
                     } else if (num === 98 || num === 99) {
-                        ledSection = num.toString(); // "98", "99" (eats the X)
+                        ledSection = num.toString(); // "98", "99" (2 digits eat the spacer)
+                        console.log('🔧 Special LED: "' + num + '" → "' + ledSection + '" (eats spacer)');
                     } else {
-                        ledSection = num.toString().substring(0, 2); // "11" (eats the X)
+                        ledSection = num.toString().substring(0, 2); // "11" (2 digits eat the spacer)
+                        console.log('🔧 Double digit LED: "' + num + '" → "' + ledSection + '" (eats spacer)');
                     }
                 } else {
-                    ledSection = formData.led.toString().charAt(0) + 'X';
+                    ledSection = 'X' + formData.led.toString().charAt(0);
+                    console.log('🔧 Text LED: X + first char = "' + ledSection + '"');
                 }
             }
             code += ledSection;
-            console.log('Step 14-15: LED section "' + ledSection + '" → Code so far: "' + code + '"');
+            console.log('Step 13-14: LED section "' + ledSection + '" → Code so far: "' + code + '"');
             
-            // Position 16: Driver (1 char, but if 2-digit, second digit eats the following X)
+            // Position 15: Driver (1 char, but if 2-digit, second digit eats the following position)
             let driver = 'X';
-            let driverOverflow = ''; // Second digit that will eat the next X
+            let driverOverflow = ''; // Second digit that will eat the next position
             if (formData.driver) {
                 const num = parseInt(formData.driver);
+                console.log('🔧 Driver raw value: "' + formData.driver + '" → parsed: ' + num);
                 if (!isNaN(num)) {
                     if (num <= 9) {
                         driver = num.toString(); // "6"
                         driverOverflow = ''; // No overflow
+                        console.log('🔧 Single digit driver: "' + driver + '" (no overflow)');
                     } else {
                         driver = num.toString().substring(0, 1); // First digit "1"
                         driverOverflow = num.toString().substring(1, 2); // Second digit "1"
+                        console.log('🔧 Double digit driver: "' + num + '" → first digit "' + driver + '", overflow "' + driverOverflow + '"');
                     }
                 } else {
                     driver = formData.driver.toString().charAt(0);
+                    console.log('🔧 Text driver: "' + driver + '"');
                 }
             }
             code += driver;
-            console.log('Step 16: Driver "' + driver + '" (overflow: "' + driverOverflow + '") → Code so far: "' + code + '"');
+            console.log('Step 15: Driver "' + driver + '" (overflow: "' + driverOverflow + '") → Code so far: "' + code + '"');
             
             // Position 17: Diffuser (1 char) - but gets replaced by driver overflow if exists
             let diffuser = formData.diffuser || 'X';
