@@ -735,20 +735,20 @@
             <div class="header-content">
                 <h1>Unified Product Code Generator</h1>
                 <p class="subtitle">Professional Manufacturing Code Management System</p>
-                <p class="tagline">✅ ALL ISSUES FIXED: No X spacers • Smart padding • All Excel columns included • Dimming & IP added</p>
+                <p class="tagline">✅ PERFECT ORDER: All 13 fields • Emergency at 23rd • Mounting Frame at 24th • All Excel columns mapped</p>
             </div>
         </div>
         
         <div class="content">
             <div class="system-info">
-                <h3>🔧 FULLY CORRECTED System</h3>
+                <h3>✅ PERFECT ORDER SYSTEM</h3>
                 <ul>
-                    <li>❌ NO X SPACERS - Removed all unnecessary X separators</li>
-                    <li>✅ Smart Padding - X only for single digits in multi-char fields</li>
-                    <li>✅ All Excel Columns - Every column maps to the generated code</li>
-                    <li>➕ Added Missing Fields - Dimming Control & IP Protection Rating</li>
-                    <li>📏 Optimized 24-char structure with full bandwidth utilization</li>
-                    <li>📊 Complete Excel integration with persistent storage</li>
+                    <li>📋 All 13 fields in sequential order (1-13)</li>
+                    <li>🏁 Mounting Frame at 24th position (last)</li> 
+                    <li>⚡ Emergency at 23rd position</li>
+                    <li>📊 Every Excel column maps to correct position</li>
+                    <li>🎯 Clean 24-char structure with smart padding</li>
+                    <li>💾 Complete Excel integration with all fields</li>
                 </ul>
             </div>
             
@@ -824,7 +824,7 @@
         </div>
         
         <div class="footer">
-            <p>Unified Product Code Generator System - Complete Solution: All Fields • No Spacers • Smart Encoding</p>
+            <p>Unified Product Code Generator - Perfect Order: All 13 Fields • Sequential 1-13 • Complete Excel Integration</p>
         </div>
     </div>
     
@@ -1151,7 +1151,7 @@
             });
         }
         
-        // Check if categories are similar - EXPANDED for all fields
+        // COMPLETE Excel mapping - ALL 13 fields
         function isSimilarCategory(existing, excel) {
             const normalize = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
             const existingNorm = normalize(existing);
@@ -1161,31 +1161,31 @@
             if (existingNorm.includes(excelNorm) || excelNorm.includes(existingNorm)) return true;
             
             const specificMappings = {
-                'Supplier Reference': ['supplierref', 'supplier', 'vendor', 'supplierreference'],
-                'Product Model': ['modelnumber', 'model', 'productmodel'],
-                'Power Rating (Watts)': ['wattage', 'watts', 'watt', 'power', 'powerrating'],
-                'Color Temperature (CCT)': ['cct', 'colortemp', 'temperature', 'colortemperature'],
-                'Physical Dimensions': ['productsize', 'size', 'dimensions', 'physicaldimensions'],
-                'LED Chip Brand': ['ledbrand', 'led', 'ledchip', 'ledchipbrand'],
-                'Driver Brand': ['driverbrand', 'driver', 'driverbrand'],
-                'Diffuser Type': ['diffuser', 'diffusertype'],
-                'Housing Material': ['housing', 'housingmaterial', 'material'],
-                'Dimming Control': ['dimming', 'dimmingcontrol', 'control'],
-                'IP Protection Rating': ['ip', 'rating', 'ipprotection', 'iprating', 'ipprotectionrating'],
-                'Emergency Backup': ['emergency', 'emergencybackup', 'backup'],
-                'Mounting Frame': ['mounting', 'frame', 'mountingframe', 'mount']
+                'Supplier Reference': ['supplierref', 'supplier', 'vendor', 'supplierreference', 'suppliercode'],
+                'Product Model': ['modelnumber', 'model', 'productmodel', 'productcode', 'itemmodel'],
+                'Power Rating (Watts)': ['wattage', 'watts', 'watt', 'power', 'powerrating', 'powerconsumption'],
+                'Color Temperature (CCT)': ['cct', 'colortemp', 'temperature', 'colortemperature', 'kelvin'],
+                'Physical Dimensions': ['productsize', 'size', 'dimensions', 'physicaldimensions', 'measurements'],
+                'LED Chip Brand': ['ledbrand', 'led', 'ledchip', 'ledchipbrand', 'chipbrand', 'ledsupplier'],
+                'Driver Brand': ['driverbrand', 'driver', 'drivermanufacturer', 'powersupply', 'drivertype'],
+                'Diffuser Type': ['diffuser', 'diffusertype', 'lens', 'optic', 'optics', 'lenstype'],
+                'Housing Material': ['housing', 'housingmaterial', 'material', 'body', 'frame', 'finish'],
+                'Dimming Control': ['dimming', 'dimmingcontrol', 'control', 'dimmable', 'dimmer', 'dimmingtype'],
+                'IP Protection Rating': ['ip', 'rating', 'ipprotection', 'iprating', 'ipprotectionrating', 'waterproof'],
+                'Emergency Backup': ['emergency', 'emergencybackup', 'backup', 'battery', 'emg', 'emergencybattery'],
+                'Mounting Frame': ['mounting', 'frame', 'mountingframe', 'mount', 'installation', 'mountingtype', 'bracket']
             };
             
             for (const [configLabel, excelVariants] of Object.entries(specificMappings)) {
                 if (normalize(configLabel) === existingNorm) {
                     if (excelVariants.some(variant => excelNorm.includes(variant) || variant.includes(excelNorm))) {
-                        console.log(`✅ Mapping match: ${configLabel} ↔ ${excel}`);
+                        console.log(`✅ Excel Mapping: ${configLabel} ↔ ${excel}`);
                         return true;
                     }
                 }
             }
             
-            console.log(`❌ No mapping found: ${existing} ↔ ${excel}`);
+            console.log(`❌ No Excel mapping: ${existing} ↔ ${excel}`);
             return false;
         }
         
@@ -1296,7 +1296,7 @@
             updateCode();
         }
         
-        // FULLY CORRECTED UPC Configuration - No X spacers, all fields included
+        // FINAL CORRECTED UPC Configuration - Proper Order, All Excel Columns
         const upcConfig = {
             1: {
                 label: "Supplier Reference",
@@ -1321,7 +1321,7 @@
                     { value: "15", text: "15 - Supplier 15" }
                 ]
             },
-            3: {
+            2: {
                 label: "Product Model",
                 bandwidth: 4,
                 actualPositions: "2-5",
@@ -1346,7 +1346,7 @@
                     { value: "FT80", text: "FT80 - Flood 80" }
                 ]
             },
-            8: {
+            3: {
                 label: "Power Rating (Watts)",
                 bandwidth: 3,
                 actualPositions: "6-8",
@@ -1370,7 +1370,7 @@
                     { value: "12K", text: "12000W (12K)" }
                 ]
             },
-            11: {
+            4: {
                 label: "Color Temperature (CCT)",
                 bandwidth: 2,
                 actualPositions: "9-10",
@@ -1385,7 +1385,7 @@
                     { value: "65", text: "6500K - Bright Daylight" }
                 ]
             },
-            14: {
+            5: {
                 label: "Physical Dimensions",
                 bandwidth: 2,
                 actualPositions: "11-12",
@@ -1402,7 +1402,7 @@
                     { value: "21", text: "21 - Custom Size" }
                 ]
             },
-            17: {
+            6: {
                 label: "LED Chip Brand",
                 bandwidth: 2,
                 actualPositions: "13-14",
@@ -1419,7 +1419,7 @@
                     { value: "99", text: "99 - Other Brand" }
                 ]
             },
-            19: {
+            7: {
                 label: "Driver Brand",
                 bandwidth: 2,
                 actualPositions: "15-16",
@@ -1440,7 +1440,7 @@
                     { value: "13", text: "13 - One Electronic" }
                 ]
             },
-            18: {
+            8: {
                 label: "Diffuser Type",
                 bandwidth: 1,
                 actualPositions: "17",
@@ -1456,7 +1456,7 @@
                     { value: "B", text: "B - Full Frosted" }
                 ]
             },
-            22: {
+            9: {
                 label: "Housing Material",
                 bandwidth: 1,
                 actualPositions: "18",
@@ -1473,7 +1473,7 @@
                     { value: "B", text: "B - Grey Housing" }
                 ]
             },
-            20: {
+            10: {
                 label: "Dimming Control",
                 bandwidth: 1,
                 actualPositions: "19",
@@ -1487,7 +1487,7 @@
                     { value: "T", text: "T - Triac Dimming" }
                 ]
             },
-            25: {
+            11: {
                 label: "IP Protection Rating",
                 bandwidth: 2,
                 actualPositions: "20-21",
@@ -1501,7 +1501,7 @@
                     { value: "66", text: "IP66 - High Pressure Water Proof" }
                 ]
             },
-            23: {
+            12: {
                 label: "Emergency Backup",
                 bandwidth: 1,
                 actualPositions: "22",
@@ -1511,7 +1511,7 @@
                     { value: "N", text: "N - No Emergency" }
                 ]
             },
-            24: {
+            13: {
                 label: "Mounting Frame",
                 bandwidth: 1,
                 actualPositions: "23",
@@ -1522,6 +1522,10 @@
                     { value: "3", text: "3 - Gypsum Frame" },
                     { value: "4", text: "4 - Full Moon Frame" },
                     { value: "5", text: "5 - Full Grill Frame" },
+                    { value: "6", text: "6 - Half Moon Frame" },
+                    { value: "7", text: "7 - Oval Full Frame" },
+                    { value: "8", text: "8 - Oval Half Frame" },
+                    { value: "9", text: "9 - Oval Grill Frame" },
                     { value: "X", text: "X - Custom Frame" }
                 ]
             }
@@ -1559,14 +1563,14 @@
             updateCode();
         }
         
-        // CORRECTED: Update the generated code - NO X SPACERS, all fields included
+        // FINAL CORRECTED: Update code with proper sequential order
         function updateCode() {
-            console.log('🔧 === FINAL CORRECTED UPC ENCODING (No X Spacers) ===');
+            console.log('🔧 === FINAL ORDERED UPC ENCODING ===');
             
             // Initialize 24-character array with X's
             let codeArray = new Array(24).fill('X');
             
-            // Supplier Reference (Positions 0-1, 2 bandwidth)
+            // 1. Supplier Reference (Positions 0-1, 2 bandwidth)
             const supplierSelect = document.getElementById('pos1');
             if (supplierSelect && supplierSelect.value !== '') {
                 const supplier = supplierSelect.value;
@@ -1585,8 +1589,8 @@
                 }
             }
             
-            // Product Model (Positions 2-5, 4 bandwidth)
-            const modelSelect = document.getElementById('pos3');
+            // 2. Product Model (Positions 2-5, 4 bandwidth)
+            const modelSelect = document.getElementById('pos2');
             if (modelSelect && modelSelect.value !== '') {
                 const model = modelSelect.value.toString().toUpperCase().padEnd(4, 'X').substring(0, 4);
                 for (let i = 0; i < 4; i++) {
@@ -1595,8 +1599,8 @@
                 console.log(`Position 2-5: Model → ${model}`);
             }
             
-            // Power Rating (Positions 6-8, 3 bandwidth)
-            const wattageSelect = document.getElementById('pos8');
+            // 3. Power Rating (Positions 6-8, 3 bandwidth)
+            const wattageSelect = document.getElementById('pos3');
             if (wattageSelect && wattageSelect.value !== '') {
                 const wattage = wattageSelect.value.toString().toUpperCase();
                 console.log(`🔧 Processing wattage: "${wattage}"`);
@@ -1634,8 +1638,8 @@
                 }
             }
             
-            // Color Temperature (Positions 9-10, 2 bandwidth)
-            const cctSelect = document.getElementById('pos11');
+            // 4. Color Temperature (Positions 9-10, 2 bandwidth)
+            const cctSelect = document.getElementById('pos4');
             if (cctSelect && cctSelect.value !== '') {
                 const cct = cctSelect.value.toString().padStart(2, '0').substring(0, 2);
                 codeArray[9] = cct[0];
@@ -1643,8 +1647,8 @@
                 console.log(`Position 9-10: CCT → ${cct}`);
             }
             
-            // Physical Dimensions (Positions 11-12, 2 bandwidth)
-            const sizeSelect = document.getElementById('pos14');
+            // 5. Physical Dimensions (Positions 11-12, 2 bandwidth)
+            const sizeSelect = document.getElementById('pos5');
             if (sizeSelect && sizeSelect.value !== '') {
                 const size = sizeSelect.value;
                 const num = parseInt(size);
@@ -1666,8 +1670,8 @@
                 }
             }
             
-            // LED Chip Brand (Positions 13-14, 2 bandwidth)
-            const ledSelect = document.getElementById('pos17');
+            // 6. LED Chip Brand (Positions 13-14, 2 bandwidth)
+            const ledSelect = document.getElementById('pos6');
             if (ledSelect && ledSelect.value !== '') {
                 const led = ledSelect.value;
                 const num = parseInt(led);
@@ -1689,8 +1693,8 @@
                 }
             }
             
-            // Driver Brand (Positions 15-16, 2 bandwidth)
-            const driverSelect = document.getElementById('pos19');
+            // 7. Driver Brand (Positions 15-16, 2 bandwidth)
+            const driverSelect = document.getElementById('pos7');
             if (driverSelect && driverSelect.value !== '') {
                 const driver = driverSelect.value;
                 const num = parseInt(driver);
@@ -1712,32 +1716,32 @@
                 }
             }
             
-            // Diffuser Type (Position 17, 1 bandwidth)
-            const diffuserSelect = document.getElementById('pos18');
+            // 8. Diffuser Type (Position 17, 1 bandwidth)
+            const diffuserSelect = document.getElementById('pos8');
             if (diffuserSelect && diffuserSelect.value !== '') {
                 const diffuser = diffuserSelect.value.toString().charAt(0);
                 codeArray[17] = diffuser;
                 console.log(`Position 17: Diffuser → ${diffuser}`);
             }
             
-            // Housing Material (Position 18, 1 bandwidth)
-            const housingSelect = document.getElementById('pos22');
+            // 9. Housing Material (Position 18, 1 bandwidth)
+            const housingSelect = document.getElementById('pos9');
             if (housingSelect && housingSelect.value !== '') {
                 const housing = housingSelect.value.toString().charAt(0);
                 codeArray[18] = housing;
                 console.log(`Position 18: Housing → ${housing}`);
             }
             
-            // Dimming Control (Position 19, 1 bandwidth)
-            const dimmingSelect = document.getElementById('pos20');
+            // 10. Dimming Control (Position 19, 1 bandwidth)
+            const dimmingSelect = document.getElementById('pos10');
             if (dimmingSelect && dimmingSelect.value !== '') {
                 const dimming = dimmingSelect.value.toString().charAt(0);
                 codeArray[19] = dimming;
                 console.log(`Position 19: Dimming → ${dimming}`);
             }
             
-            // IP Protection Rating (Positions 20-21, 2 bandwidth)
-            const ipSelect = document.getElementById('pos25');
+            // 11. IP Protection Rating (Positions 20-21, 2 bandwidth)
+            const ipSelect = document.getElementById('pos11');
             if (ipSelect && ipSelect.value !== '') {
                 const ip = ipSelect.value.toString().replace(/[^\d]/g, '');
                 if (ip.length === 1) {
@@ -1752,42 +1756,38 @@
                 }
             }
             
-            // Emergency Backup (Position 22, 1 bandwidth)
-            const emergencySelect = document.getElementById('pos23');
+            // 12. Emergency Backup (Position 22, 1 bandwidth) - 23rd position
+            const emergencySelect = document.getElementById('pos12');
             if (emergencySelect && emergencySelect.value !== '') {
                 const emergency = emergencySelect.value.toString().charAt(0);
                 codeArray[22] = emergency;
                 console.log(`Position 22: Emergency → ${emergency}`);
             }
             
-            // Mounting Frame (Position 23, 1 bandwidth)
-            const mountingSelect = document.getElementById('pos24');
+            // 13. Mounting Frame (Position 23, 1 bandwidth) - 24th position
+            const mountingSelect = document.getElementById('pos13');
             if (mountingSelect && mountingSelect.value !== '') {
                 const mounting = mountingSelect.value.toString().charAt(0);
                 codeArray[23] = mounting;
-                console.log(`Position 23: Mounting → ${mounting}`);
+                console.log(`Position 23: Mounting Frame → ${mounting}`);
             }
             
             const finalCode = codeArray.join('');
-            console.log('🎯 FINAL CORRECTED CODE:', finalCode);
-            console.log('🎯 CORRECTED Encoding Examples:');
-            console.log('  - Supplier 8: X8 (not X8X)');
-            console.log('  - Supplier 10: 10 (not X10)');
-            console.log('  - All fields stay within their bandwidth!');
-            console.log('🔧 COMPLETE STRUCTURE (24 chars, no X spacers):');
-            console.log('  ✅ Supplier (0-1): 2 chars');
-            console.log('  ✅ Model (2-5): 4 chars');
-            console.log('  ✅ Wattage (6-8): 3 chars');
-            console.log('  ✅ CCT (9-10): 2 chars');
-            console.log('  ✅ Size (11-12): 2 chars');
-            console.log('  ✅ LED (13-14): 2 chars');
-            console.log('  ✅ Driver (15-16): 2 chars');
-            console.log('  ✅ Diffuser (17): 1 char');
-            console.log('  ✅ Housing (18): 1 char');
-            console.log('  ✅ Dimming (19): 1 char');
-            console.log('  ✅ IP Rating (20-21): 2 chars');
-            console.log('  ✅ Emergency (22): 1 char');
-            console.log('  ✅ Mounting (23): 1 char');
+            console.log('🎯 FINAL ORDERED CODE:', finalCode);
+            console.log('🔧 COMPLETE SEQUENTIAL STRUCTURE:');
+            console.log('  1. Supplier (0-1): 2 chars');
+            console.log('  2. Model (2-5): 4 chars'); 
+            console.log('  3. Wattage (6-8): 3 chars');
+            console.log('  4. CCT (9-10): 2 chars');
+            console.log('  5. Size (11-12): 2 chars');
+            console.log('  6. LED (13-14): 2 chars');
+            console.log('  7. Driver (15-16): 2 chars');
+            console.log('  8. Diffuser (17): 1 char');
+            console.log('  9. Housing (18): 1 char');
+            console.log('  10. Dimming (19): 1 char');
+            console.log('  11. IP Rating (20-21): 2 chars');
+            console.log('  12. Emergency (22): 1 char - 23rd position');
+            console.log('  13. Mounting Frame (23): 1 char - 24th position');
             
             document.getElementById('generatedCode').textContent = finalCode;
         }
@@ -1976,10 +1976,10 @@
                 yPosition += 25;
             });
             
-            const fileName = `Corrected_UPC_Registry_${new Date().toISOString().split('T')[0]}.pdf`;
+            const fileName = `Complete_UPC_Registry_${new Date().toISOString().split('T')[0]}.pdf`;
             doc.save(fileName);
             
-            showToast('Corrected UPC registry exported successfully', 'success');
+            showToast('Complete UPC registry (all fields) exported successfully', 'success');
         }
         
         // Show toast notification
