@@ -735,20 +735,20 @@
             <div class="header-content">
                 <h1>Unified Product Code Generator</h1>
                 <p class="subtitle">Professional Manufacturing Code Management System</p>
-                <p class="tagline">CORRECTED: Supplier 8 → X8 (not X8X) | Fixed bandwidth allocation</p>
+                <p class="tagline">✅ ALL ISSUES FIXED: No X spacers • Smart padding • All Excel columns included • Dimming & IP added</p>
             </div>
         </div>
         
         <div class="content">
             <div class="system-info">
-                <h3>🔧 Fixed Encoding Issues</h3>
+                <h3>🔧 FULLY CORRECTED System</h3>
                 <ul>
-                    <li>Supplier Reference: Now properly uses 2 bandwidth for 2-digit numbers</li>
-                    <li>Power Wattage: Fixed 3 bandwidth (single digit: XX + digit, double: X + digits)</li>
-                    <li>12K wattage: Now shows "12K" correctly in the code</li>
-                    <li>Driver Brand: Corrected to use 2 bandwidth instead of 1</li>
-                    <li>Driver overflow issue: Fixed - no longer affects diffuser type</li>
-                    <li>Excel upload for dynamic dropdown population</li>
+                    <li>❌ NO X SPACERS - Removed all unnecessary X separators</li>
+                    <li>✅ Smart Padding - X only for single digits in multi-char fields</li>
+                    <li>✅ All Excel Columns - Every column maps to the generated code</li>
+                    <li>➕ Added Missing Fields - Dimming Control & IP Protection Rating</li>
+                    <li>📏 Optimized 24-char structure with full bandwidth utilization</li>
+                    <li>📊 Complete Excel integration with persistent storage</li>
                 </ul>
             </div>
             
@@ -781,7 +781,7 @@
             
             <div class="code-display">
                 <div class="code-display-content">
-                    <h2>🔧 Generated Product Code (Fixed Encoding)</h2>
+                    <h2>🎯 Generated UPC Code - ALL ISSUES FIXED</h2>
                     <div class="position-guide">012345678901234567890123</div>
                     <div class="generated-code" id="generatedCode">XXXXXXXXXXXXXXXXXXXXXXXX</div>
                     <div class="code-actions">
@@ -799,7 +799,7 @@
             </div>
             
             <div class="form-section">
-                <h2 class="section-title">⚙️ Product Specifications (Corrected Bandwidth)</h2>
+                <h2 class="section-title">🎯 Complete Product Specifications (All Fields)</h2>
                 <form id="upcForm">
                     <div class="form-grid" id="formGrid">
                         <!-- Form groups will be generated dynamically -->
@@ -824,7 +824,7 @@
         </div>
         
         <div class="footer">
-            <p>Unified Product Code Generator System - Corrected Encoding Version</p>
+            <p>Unified Product Code Generator System - Complete Solution: All Fields • No Spacers • Smart Encoding</p>
         </div>
     </div>
     
@@ -1151,7 +1151,7 @@
             });
         }
         
-        // Check if categories are similar
+        // Check if categories are similar - EXPANDED for all fields
         function isSimilarCategory(existing, excel) {
             const normalize = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
             const existingNorm = normalize(existing);
@@ -1161,27 +1161,31 @@
             if (existingNorm.includes(excelNorm) || excelNorm.includes(existingNorm)) return true;
             
             const specificMappings = {
-                'Power Rating (Watts)': ['wattage', 'watts', 'watt', 'power'],
-                'Supplier Reference': ['supplierref', 'supplier', 'vendor'],
-                'Product Model': ['modelnumber', 'model'],
-                'Color Temperature (CCT)': ['cct', 'colortemp', 'temperature'],
-                'Physical Dimensions': ['productsize', 'size', 'dimensions'],
-                'LED Chip Brand': ['ledbrand', 'led'],
-                'Driver Brand': ['driverbrand', 'driver'],
-                'Diffuser Type': ['diffuser'],
-                'Housing Material': ['housing'],
-                'Emergency Backup': ['emergency'],
-                'Mounting Frame': ['mounting', 'frame']
+                'Supplier Reference': ['supplierref', 'supplier', 'vendor', 'supplierreference'],
+                'Product Model': ['modelnumber', 'model', 'productmodel'],
+                'Power Rating (Watts)': ['wattage', 'watts', 'watt', 'power', 'powerrating'],
+                'Color Temperature (CCT)': ['cct', 'colortemp', 'temperature', 'colortemperature'],
+                'Physical Dimensions': ['productsize', 'size', 'dimensions', 'physicaldimensions'],
+                'LED Chip Brand': ['ledbrand', 'led', 'ledchip', 'ledchipbrand'],
+                'Driver Brand': ['driverbrand', 'driver', 'driverbrand'],
+                'Diffuser Type': ['diffuser', 'diffusertype'],
+                'Housing Material': ['housing', 'housingmaterial', 'material'],
+                'Dimming Control': ['dimming', 'dimmingcontrol', 'control'],
+                'IP Protection Rating': ['ip', 'rating', 'ipprotection', 'iprating', 'ipprotectionrating'],
+                'Emergency Backup': ['emergency', 'emergencybackup', 'backup'],
+                'Mounting Frame': ['mounting', 'frame', 'mountingframe', 'mount']
             };
             
             for (const [configLabel, excelVariants] of Object.entries(specificMappings)) {
                 if (normalize(configLabel) === existingNorm) {
                     if (excelVariants.some(variant => excelNorm.includes(variant) || variant.includes(excelNorm))) {
+                        console.log(`✅ Mapping match: ${configLabel} ↔ ${excel}`);
                         return true;
                     }
                 }
             }
             
+            console.log(`❌ No mapping found: ${existing} ↔ ${excel}`);
             return false;
         }
         
@@ -1292,7 +1296,7 @@
             updateCode();
         }
         
-        // CORRECTED UPC Configuration Data with proper position mapping
+        // FULLY CORRECTED UPC Configuration - No X spacers, all fields included
         const upcConfig = {
             1: {
                 label: "Supplier Reference",
@@ -1336,13 +1340,16 @@
                     { value: "HB0B", text: "HB0B - High Bay 0B" },
                     { value: "HB40", text: "HB40 - High Bay 40" },
                     { value: "HB50", text: "HB50 - High Bay 50" },
-                    { value: "HB30", text: "HB30 - High Bay 30" }
+                    { value: "HB30", text: "HB30 - High Bay 30" },
+                    { value: "FT20", text: "FT20 - Flood 20" },
+                    { value: "FT16", text: "FT16 - Flood 16" },
+                    { value: "FT80", text: "FT80 - Flood 80" }
                 ]
             },
             8: {
                 label: "Power Rating (Watts)",
                 bandwidth: 3,
-                actualPositions: "7-9",
+                actualPositions: "6-8",
                 options: [
                     { value: "", text: "Select Power Rating" },
                     { value: "6", text: "6W" },
@@ -1359,40 +1366,46 @@
                     { value: "100", text: "100W" },
                     { value: "150", text: "150W" },
                     { value: "200", text: "200W" },
+                    { value: "218", text: "218W" },
                     { value: "12K", text: "12000W (12K)" }
                 ]
             },
             11: {
                 label: "Color Temperature (CCT)",
                 bandwidth: 2,
-                actualPositions: "10-11",
+                actualPositions: "9-10",
                 options: [
                     { value: "", text: "Select Color Temperature" },
                     { value: "27", text: "2700K - Warm White" },
                     { value: "30", text: "3000K - Soft White" },
+                    { value: "32", text: "3200K - Neutral White" },
                     { value: "40", text: "4000K - Cool White" },
                     { value: "50", text: "5000K - Daylight" },
+                    { value: "60", text: "6000K - Cool Daylight" },
                     { value: "65", text: "6500K - Bright Daylight" }
                 ]
             },
             14: {
                 label: "Physical Dimensions",
                 bandwidth: 2,
-                actualPositions: "13-14",
+                actualPositions: "11-12",
                 options: [
                     { value: "", text: "Select Physical Dimensions" },
                     { value: "1", text: "1 - 595×595×30mm" },
                     { value: "2", text: "2 - 595×595×35mm" },
                     { value: "3", text: "3 - 1295×595×30mm" },
+                    { value: "4", text: "4 - 665×84mm" },
+                    { value: "5", text: "5 - 1275×84mm" },
                     { value: "10", text: "10 - Ø120mm" },
                     { value: "11", text: "11 - Ø160mm" },
-                    { value: "12", text: "12 - Ø190mm" }
+                    { value: "12", text: "12 - Ø190mm" },
+                    { value: "21", text: "21 - Custom Size" }
                 ]
             },
             17: {
                 label: "LED Chip Brand",
                 bandwidth: 2,
-                actualPositions: "16-17",
+                actualPositions: "13-14",
                 options: [
                     { value: "", text: "Select LED Chip Brand" },
                     { value: "1", text: "1 - Lumiled" },
@@ -1400,6 +1413,8 @@
                     { value: "3", text: "3 - Seoul Semiconductor" },
                     { value: "4", text: "4 - Samsung" },
                     { value: "5", text: "5 - CREE" },
+                    { value: "6", text: "6 - Edison Opto" },
+                    { value: "7", text: "7 - Everlite" },
                     { value: "98", text: "98 - Tube Rod LED" },
                     { value: "99", text: "99 - Other Brand" }
                 ]
@@ -1407,7 +1422,7 @@
             19: {
                 label: "Driver Brand",
                 bandwidth: 2,
-                actualPositions: "19-20",
+                actualPositions: "15-16",
                 options: [
                     { value: "", text: "Select Driver Brand" },
                     { value: "1", text: "1 - Tridonic" },
@@ -1415,20 +1430,28 @@
                     { value: "3", text: "3 - VS Electronics" },
                     { value: "4", text: "4 - TCI" },
                     { value: "5", text: "5 - Mean Well" },
+                    { value: "6", text: "6 - ELF" },
+                    { value: "7", text: "7 - Inventronics" },
+                    { value: "8", text: "8 - Eaglerise" },
+                    { value: "9", text: "9 - Boke" },
                     { value: "10", text: "10 - Lifud" },
                     { value: "11", text: "11 - Bright Power" },
-                    { value: "12", text: "12 - Osram Driver" }
+                    { value: "12", text: "12 - Osram Driver" },
+                    { value: "13", text: "13 - One Electronic" }
                 ]
             },
-            21: {
+            18: {
                 label: "Diffuser Type",
                 bandwidth: 1,
-                actualPositions: "21",
+                actualPositions: "17",
                 options: [
                     { value: "", text: "Select Diffuser Type" },
                     { value: "1", text: "1 - Opal Diffuser" },
                     { value: "2", text: "2 - Micro Prism" },
                     { value: "3", text: "3 - Prismatic" },
+                    { value: "4", text: "4 - Clear Glass" },
+                    { value: "5", text: "5 - Centre Frosted" },
+                    { value: "6", text: "6 - Full Frosted" },
                     { value: "A", text: "A - Clear Glass" },
                     { value: "B", text: "B - Full Frosted" }
                 ]
@@ -1436,23 +1459,70 @@
             22: {
                 label: "Housing Material",
                 bandwidth: 1,
-                actualPositions: "22",
+                actualPositions: "18",
                 options: [
                     { value: "", text: "Select Housing Material" },
                     { value: "1", text: "1 - Black Housing" },
                     { value: "2", text: "2 - White Housing" },
+                    { value: "3", text: "3 - Silver Housing" },
+                    { value: "4", text: "4 - Grey Housing" },
+                    { value: "5", text: "5 - Graphite Housing" },
+                    { value: "6", text: "6 - PC Housing" },
+                    { value: "7", text: "7 - GRP Housing" },
                     { value: "A", text: "A - Silver Housing" },
                     { value: "B", text: "B - Grey Housing" }
+                ]
+            },
+            20: {
+                label: "Dimming Control",
+                bandwidth: 1,
+                actualPositions: "19",
+                options: [
+                    { value: "", text: "Select Dimming Control" },
+                    { value: "S", text: "S - Standard On/Off" },
+                    { value: "D", text: "D - DALI Dimming" },
+                    { value: "P", text: "P - Phase Cut Dimming" },
+                    { value: "0", text: "0 - 0-10V Dimming" },
+                    { value: "1", text: "1 - 1-10V Dimming" },
+                    { value: "T", text: "T - Triac Dimming" }
+                ]
+            },
+            25: {
+                label: "IP Protection Rating",
+                bandwidth: 2,
+                actualPositions: "20-21",
+                options: [
+                    { value: "", text: "Select IP Rating" },
+                    { value: "20", text: "IP20 - Indoor Use" },
+                    { value: "40", text: "IP40 - Splash Resistant" },
+                    { value: "44", text: "IP44 - Water Resistant" },
+                    { value: "54", text: "IP54 - Dust/Water Protected" },
+                    { value: "65", text: "IP65 - Dust/Jet Water Proof" },
+                    { value: "66", text: "IP66 - High Pressure Water Proof" }
                 ]
             },
             23: {
                 label: "Emergency Backup",
                 bandwidth: 1,
-                actualPositions: "23",
+                actualPositions: "22",
                 options: [
                     { value: "", text: "Select Emergency Option" },
                     { value: "E", text: "E - Emergency Backup" },
                     { value: "N", text: "N - No Emergency" }
+                ]
+            },
+            24: {
+                label: "Mounting Frame",
+                bandwidth: 1,
+                actualPositions: "23",
+                options: [
+                    { value: "", text: "Select Mounting Frame" },
+                    { value: "1", text: "1 - Dampa Frame" },
+                    { value: "2", text: "2 - Surface Mount" },
+                    { value: "3", text: "3 - Gypsum Frame" },
+                    { value: "4", text: "4 - Full Moon Frame" },
+                    { value: "5", text: "5 - Full Grill Frame" },
+                    { value: "X", text: "X - Custom Frame" }
                 ]
             }
         };
@@ -1489,14 +1559,14 @@
             updateCode();
         }
         
-        // CORRECTED: Update the generated code with proper bandwidth allocation
+        // CORRECTED: Update the generated code - NO X SPACERS, all fields included
         function updateCode() {
-            console.log('🔧 === CORRECTED UPC ENCODING ===');
+            console.log('🔧 === FINAL CORRECTED UPC ENCODING (No X Spacers) ===');
             
             // Initialize 24-character array with X's
             let codeArray = new Array(24).fill('X');
             
-            // CORRECTED: Supplier Reference (Positions 0-1, 2 bandwidth total)
+            // Supplier Reference (Positions 0-1, 2 bandwidth)
             const supplierSelect = document.getElementById('pos1');
             if (supplierSelect && supplierSelect.value !== '') {
                 const supplier = supplierSelect.value;
@@ -1513,9 +1583,6 @@
                         console.log(`Position 0-1: Supplier ${num} → ${supplierStr}`);
                     }
                 }
-            } else {
-                // Default: X in first position when no supplier selected
-                codeArray[0] = 'X';
             }
             
             // Product Model (Positions 2-5, 4 bandwidth)
@@ -1528,150 +1595,177 @@
                 console.log(`Position 2-5: Model → ${model}`);
             }
             
-            // Position 6: Always X (spacer)
-            codeArray[6] = 'X';
-            console.log('Position 6: Spacer → X');
-            
-            // CORRECTED: Power Rating (Positions 7-9, 3 bandwidth)
+            // Power Rating (Positions 6-8, 3 bandwidth)
             const wattageSelect = document.getElementById('pos8');
             if (wattageSelect && wattageSelect.value !== '') {
                 const wattage = wattageSelect.value.toString().toUpperCase();
                 console.log(`🔧 Processing wattage: "${wattage}"`);
                 
                 if (wattage === '12K') {
-                    // Special case: 12K takes all 3 positions
-                    codeArray[7] = '1';
-                    codeArray[8] = '2';
-                    codeArray[9] = 'K';
-                    console.log('Position 7-9: 12K → 12K');
+                    codeArray[6] = '1';
+                    codeArray[7] = '2';
+                    codeArray[8] = 'K';
+                    console.log('Position 6-8: 12K → 12K');
                 } else {
                     const watt = parseInt(wattage.replace(/[^\d]/g, ''));
                     if (!isNaN(watt)) {
                         if (watt <= 9) {
                             // Single digit: XX + digit
+                            codeArray[6] = 'X';
                             codeArray[7] = 'X';
-                            codeArray[8] = 'X';
-                            codeArray[9] = watt.toString();
-                            console.log(`Position 7-9: ${watt}W → XX${watt}`);
+                            codeArray[8] = watt.toString();
+                            console.log(`Position 6-8: ${watt}W → XX${watt}`);
                         } else if (watt <= 99) {
                             // Double digit: X + double digit
                             const wattStr = watt.toString().padStart(2, '0');
-                            codeArray[7] = 'X';
-                            codeArray[8] = wattStr[0];
-                            codeArray[9] = wattStr[1];
-                            console.log(`Position 7-9: ${watt}W → X${wattStr}`);
+                            codeArray[6] = 'X';
+                            codeArray[7] = wattStr[0];
+                            codeArray[8] = wattStr[1];
+                            console.log(`Position 6-8: ${watt}W → X${wattStr}`);
                         } else {
                             // Triple digit: all 3 positions
                             const wattStr = watt.toString().substring(0, 3);
-                            codeArray[7] = wattStr[0] || 'X';
-                            codeArray[8] = wattStr[1] || 'X';
-                            codeArray[9] = wattStr[2] || 'X';
-                            console.log(`Position 7-9: ${watt}W → ${wattStr}`);
+                            codeArray[6] = wattStr[0] || 'X';
+                            codeArray[7] = wattStr[1] || 'X';
+                            codeArray[8] = wattStr[2] || 'X';
+                            console.log(`Position 6-8: ${watt}W → ${wattStr}`);
                         }
                     }
                 }
             }
             
-            // Color Temperature (Positions 10-11, 2 bandwidth)
+            // Color Temperature (Positions 9-10, 2 bandwidth)
             const cctSelect = document.getElementById('pos11');
             if (cctSelect && cctSelect.value !== '') {
                 const cct = cctSelect.value.toString().padStart(2, '0').substring(0, 2);
-                codeArray[10] = cct[0];
-                codeArray[11] = cct[1];
-                console.log(`Position 10-11: CCT → ${cct}`);
+                codeArray[9] = cct[0];
+                codeArray[10] = cct[1];
+                console.log(`Position 9-10: CCT → ${cct}`);
             }
             
-            // Position 12: Always X (spacer)
-            codeArray[12] = 'X';
-            console.log('Position 12: Spacer → X');
-            
-            // Physical Dimensions (Positions 13-14, 2 bandwidth)
+            // Physical Dimensions (Positions 11-12, 2 bandwidth)
             const sizeSelect = document.getElementById('pos14');
             if (sizeSelect && sizeSelect.value !== '') {
                 const size = sizeSelect.value;
                 const num = parseInt(size);
                 if (!isNaN(num)) {
                     if (num <= 9) {
-                        codeArray[13] = num.toString();
-                        codeArray[14] = 'X';
-                        console.log(`Position 13-14: Size ${num} → ${num}X`);
+                        codeArray[11] = 'X';
+                        codeArray[12] = num.toString();
+                        console.log(`Position 11-12: Size ${num} → X${num}`);
                     } else {
                         const sizeStr = num.toString().substring(0, 2);
-                        codeArray[13] = sizeStr[0];
-                        codeArray[14] = sizeStr[1];
-                        console.log(`Position 13-14: Size ${num} → ${sizeStr}`);
+                        codeArray[11] = sizeStr[0];
+                        codeArray[12] = sizeStr[1];
+                        console.log(`Position 11-12: Size ${num} → ${sizeStr}`);
                     }
+                } else {
+                    codeArray[11] = 'X';
+                    codeArray[12] = size.toString().charAt(0);
+                    console.log(`Position 11-12: Size ${size} → X${size.charAt(0)}`);
                 }
             }
             
-            // Position 15: Always X (spacer)
-            codeArray[15] = 'X';
-            console.log('Position 15: Spacer → X');
-            
-            // LED Chip Brand (Positions 16-17, 2 bandwidth)
+            // LED Chip Brand (Positions 13-14, 2 bandwidth)
             const ledSelect = document.getElementById('pos17');
             if (ledSelect && ledSelect.value !== '') {
                 const led = ledSelect.value;
                 const num = parseInt(led);
                 if (!isNaN(num)) {
                     if (num <= 9) {
-                        codeArray[16] = num.toString();
-                        codeArray[17] = 'X';
-                        console.log(`Position 16-17: LED ${num} → ${num}X`);
+                        codeArray[13] = 'X';
+                        codeArray[14] = num.toString();
+                        console.log(`Position 13-14: LED ${num} → X${num}`);
                     } else {
                         const ledStr = num.toString().substring(0, 2);
-                        codeArray[16] = ledStr[0];
-                        codeArray[17] = ledStr[1];
-                        console.log(`Position 16-17: LED ${num} → ${ledStr}`);
+                        codeArray[13] = ledStr[0];
+                        codeArray[14] = ledStr[1];
+                        console.log(`Position 13-14: LED ${num} → ${ledStr}`);
                     }
+                } else {
+                    codeArray[13] = 'X';
+                    codeArray[14] = led.toString().charAt(0);
+                    console.log(`Position 13-14: LED ${led} → X${led.charAt(0)}`);
                 }
             }
             
-            // Position 18: Always X (spacer)
-            codeArray[18] = 'X';
-            console.log('Position 18: Spacer → X');
-            
-            // CORRECTED: Driver Brand (Positions 19-20, 2 bandwidth - NO MORE OVERFLOW!)
+            // Driver Brand (Positions 15-16, 2 bandwidth)
             const driverSelect = document.getElementById('pos19');
             if (driverSelect && driverSelect.value !== '') {
                 const driver = driverSelect.value;
                 const num = parseInt(driver);
                 if (!isNaN(num)) {
                     if (num <= 9) {
-                        codeArray[19] = num.toString();
-                        codeArray[20] = 'X';
-                        console.log(`Position 19-20: Driver ${num} → ${num}X`);
+                        codeArray[15] = 'X';
+                        codeArray[16] = num.toString();
+                        console.log(`Position 15-16: Driver ${num} → X${num}`);
                     } else {
                         const driverStr = num.toString().substring(0, 2);
-                        codeArray[19] = driverStr[0];
-                        codeArray[20] = driverStr[1];
-                        console.log(`Position 19-20: Driver ${num} → ${driverStr}`);
+                        codeArray[15] = driverStr[0];
+                        codeArray[16] = driverStr[1];
+                        console.log(`Position 15-16: Driver ${num} → ${driverStr}`);
                     }
+                } else {
+                    codeArray[15] = 'X';
+                    codeArray[16] = driver.toString().charAt(0);
+                    console.log(`Position 15-16: Driver ${driver} → X${driver.charAt(0)}`);
                 }
             }
             
-            // CORRECTED: Diffuser Type (Position 21, 1 bandwidth - NO MORE INTERFERENCE!)
-            const diffuserSelect = document.getElementById('pos21');
+            // Diffuser Type (Position 17, 1 bandwidth)
+            const diffuserSelect = document.getElementById('pos18');
             if (diffuserSelect && diffuserSelect.value !== '') {
                 const diffuser = diffuserSelect.value.toString().charAt(0);
-                codeArray[21] = diffuser;
-                console.log(`Position 21: Diffuser → ${diffuser}`);
+                codeArray[17] = diffuser;
+                console.log(`Position 17: Diffuser → ${diffuser}`);
             }
             
-            // Housing Material (Position 22, 1 bandwidth)
+            // Housing Material (Position 18, 1 bandwidth)
             const housingSelect = document.getElementById('pos22');
             if (housingSelect && housingSelect.value !== '') {
                 const housing = housingSelect.value.toString().charAt(0);
-                codeArray[22] = housing;
-                console.log(`Position 22: Housing → ${housing}`);
+                codeArray[18] = housing;
+                console.log(`Position 18: Housing → ${housing}`);
             }
             
-            // Emergency Backup (Position 23, 1 bandwidth)
+            // Dimming Control (Position 19, 1 bandwidth)
+            const dimmingSelect = document.getElementById('pos20');
+            if (dimmingSelect && dimmingSelect.value !== '') {
+                const dimming = dimmingSelect.value.toString().charAt(0);
+                codeArray[19] = dimming;
+                console.log(`Position 19: Dimming → ${dimming}`);
+            }
+            
+            // IP Protection Rating (Positions 20-21, 2 bandwidth)
+            const ipSelect = document.getElementById('pos25');
+            if (ipSelect && ipSelect.value !== '') {
+                const ip = ipSelect.value.toString().replace(/[^\d]/g, '');
+                if (ip.length === 1) {
+                    codeArray[20] = 'X';
+                    codeArray[21] = ip;
+                    console.log(`Position 20-21: IP${ip} → X${ip}`);
+                } else if (ip.length >= 2) {
+                    const ipStr = ip.substring(0, 2);
+                    codeArray[20] = ipStr[0];
+                    codeArray[21] = ipStr[1];
+                    console.log(`Position 20-21: IP${ip} → ${ipStr}`);
+                }
+            }
+            
+            // Emergency Backup (Position 22, 1 bandwidth)
             const emergencySelect = document.getElementById('pos23');
             if (emergencySelect && emergencySelect.value !== '') {
                 const emergency = emergencySelect.value.toString().charAt(0);
-                codeArray[23] = emergency;
-                console.log(`Position 23: Emergency → ${emergency}`);
+                codeArray[22] = emergency;
+                console.log(`Position 22: Emergency → ${emergency}`);
+            }
+            
+            // Mounting Frame (Position 23, 1 bandwidth)
+            const mountingSelect = document.getElementById('pos24');
+            if (mountingSelect && mountingSelect.value !== '') {
+                const mounting = mountingSelect.value.toString().charAt(0);
+                codeArray[23] = mounting;
+                console.log(`Position 23: Mounting → ${mounting}`);
             }
             
             const finalCode = codeArray.join('');
@@ -1680,21 +1774,20 @@
             console.log('  - Supplier 8: X8 (not X8X)');
             console.log('  - Supplier 10: 10 (not X10)');
             console.log('  - All fields stay within their bandwidth!');
-            console.log('🔧 CORRECTED Encoding Structure:');
-            console.log('  ✅ Supplier (0-1): Single digit = X+digit, Double digit = digit+digit');
-            console.log('  ✅ Model (2-5): 4 characters');
-            console.log('  ✅ Spacer (6): X');
-            console.log('  ✅ Wattage (7-9): 3 bandwidth (XX+digit for single, X+digits for double, 12K special)');
-            console.log('  ✅ CCT (10-11): 2 bandwidth');
-            console.log('  ✅ Spacer (12): X');
-            console.log('  ✅ Size (13-14): 2 bandwidth');
-            console.log('  ✅ Spacer (15): X');
-            console.log('  ✅ LED (16-17): 2 bandwidth');
-            console.log('  ✅ Spacer (18): X');
-            console.log('  ✅ Driver (19-20): 2 bandwidth (no overflow!)');
-            console.log('  ✅ Diffuser (21): 1 bandwidth');
-            console.log('  ✅ Housing (22): 1 bandwidth');
-            console.log('  ✅ Emergency (23): 1 bandwidth');
+            console.log('🔧 COMPLETE STRUCTURE (24 chars, no X spacers):');
+            console.log('  ✅ Supplier (0-1): 2 chars');
+            console.log('  ✅ Model (2-5): 4 chars');
+            console.log('  ✅ Wattage (6-8): 3 chars');
+            console.log('  ✅ CCT (9-10): 2 chars');
+            console.log('  ✅ Size (11-12): 2 chars');
+            console.log('  ✅ LED (13-14): 2 chars');
+            console.log('  ✅ Driver (15-16): 2 chars');
+            console.log('  ✅ Diffuser (17): 1 char');
+            console.log('  ✅ Housing (18): 1 char');
+            console.log('  ✅ Dimming (19): 1 char');
+            console.log('  ✅ IP Rating (20-21): 2 chars');
+            console.log('  ✅ Emergency (22): 1 char');
+            console.log('  ✅ Mounting (23): 1 char');
             
             document.getElementById('generatedCode').textContent = finalCode;
         }
@@ -1850,12 +1943,12 @@
             doc.setFontSize(24);
             doc.setFont(undefined, 'bold');
             doc.setTextColor(30, 64, 175);
-            doc.text('CORRECTED UPC REGISTRY', 20, 30);
+            doc.text('COMPLETE UPC REGISTRY', 20, 30);
             
             doc.setFontSize(16);
             doc.setTextColor(107, 114, 128);
             doc.setFont(undefined, 'normal');
-            doc.text('Fixed Bandwidth Allocation System', 20, 45);
+            doc.text('All Fields • No X Spacers • Smart Encoding System', 20, 45);
             
             doc.setFontSize(12);
             doc.setTextColor(0, 0, 0);
