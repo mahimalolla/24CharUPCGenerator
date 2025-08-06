@@ -184,6 +184,19 @@
             text-align: center;
         }
         
+        .position-guide {
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+            font-size: 0.9rem;
+            font-weight: 400;
+            letter-spacing: 3px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            opacity: 0.8;
+        }
+        
         .code-actions {
             display: flex;
             gap: 15px;
@@ -302,6 +315,17 @@
             font-size: 0.8rem;
             font-weight: 600;
             margin-left: 10px;
+            display: inline-block;
+        }
+        
+        .bandwidth-badge {
+            background: var(--success-green);
+            color: var(--white);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 8px;
             display: inline-block;
         }
         
@@ -486,61 +510,6 @@
             border-left: 4px solid var(--danger-red);
         }
         
-        .footer {
-            background: var(--dark-gray);
-            color: var(--white);
-            text-align: center;
-            padding: 30px;
-            font-size: 0.9rem;
-        }
-        
-        .footer p {
-            opacity: 0.8;
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            body {
-                padding: 20px 10px;
-            }
-            
-            .header {
-                padding: 40px 20px;
-            }
-            
-            .header h1 {
-                font-size: 2.2rem;
-            }
-            
-            .content {
-                padding: 30px 20px;
-            }
-            
-            .generated-code {
-                font-size: 1.4rem;
-                letter-spacing: 2px;
-            }
-            
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .code-actions,
-            .saved-codes-actions {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .btn {
-                justify-content: center;
-            }
-        }
-        
-        /* Smooth scrolling */
-        html {
-            scroll-behavior: smooth;
-        }
-        
         .excel-upload-section {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: var(--white);
@@ -684,6 +653,61 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        .footer {
+            background: var(--dark-gray);
+            color: var(--white);
+            text-align: center;
+            padding: 30px;
+            font-size: 0.9rem;
+        }
+        
+        .footer p {
+            opacity: 0.8;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 10px;
+            }
+            
+            .header {
+                padding: 40px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+            
+            .generated-code {
+                font-size: 1.4rem;
+                letter-spacing: 2px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .code-actions,
+            .saved-codes-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .btn {
+                justify-content: center;
+            }
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
         
         /* Custom scrollbar */
         .saved-codes-display::-webkit-scrollbar {
@@ -711,21 +735,20 @@
             <div class="header-content">
                 <h1>Unified Product Code Generator</h1>
                 <p class="subtitle">Professional Manufacturing Code Management System</p>
-                <p class="tagline">Streamline your product identification with standardized 24-digit alphanumeric codes</p>
+                <p class="tagline">CORRECTED: Supplier 8 → X8 (not X8X) | Fixed bandwidth allocation</p>
             </div>
         </div>
         
         <div class="content">
             <div class="system-info">
-                <h3>🏭 System Overview</h3>
+                <h3>🔧 Fixed Encoding Issues</h3>
                 <ul>
-                    <li>Generate standardized 24-digit alphanumeric product codes</li>
-                    <li>Dropdown-based selection ensures consistency and accuracy</li>
-                    <li>Real-time code generation with instant validation</li>
-                    <li>Integrated list management with professional PDF export</li>
-                    <li>Direct integration capability with ERP systems (FOCUS compatible)</li>
+                    <li>Supplier Reference: Now properly uses 2 bandwidth for 2-digit numbers</li>
+                    <li>Power Wattage: Fixed 3 bandwidth (single digit: XX + digit, double: X + digits)</li>
+                    <li>12K wattage: Now shows "12K" correctly in the code</li>
+                    <li>Driver Brand: Corrected to use 2 bandwidth instead of 1</li>
+                    <li>Driver overflow issue: Fixed - no longer affects diffuser type</li>
                     <li>Excel upload for dynamic dropdown population</li>
-                    <li>Works in all environments (local files, web servers, sandboxed)</li>
                 </ul>
             </div>
             
@@ -758,7 +781,8 @@
             
             <div class="code-display">
                 <div class="code-display-content">
-                    <h2>🔧 Generated Product Code</h2>
+                    <h2>🔧 Generated Product Code (Fixed Encoding)</h2>
+                    <div class="position-guide">012345678901234567890123</div>
                     <div class="generated-code" id="generatedCode">XXXXXXXXXXXXXXXXXXXXXXXX</div>
                     <div class="code-actions">
                         <button class="btn btn-copy" onclick="copyCode()">
@@ -775,7 +799,7 @@
             </div>
             
             <div class="form-section">
-                <h2 class="section-title">⚙️ Product Specifications</h2>
+                <h2 class="section-title">⚙️ Product Specifications (Corrected Bandwidth)</h2>
                 <form id="upcForm">
                     <div class="form-grid" id="formGrid">
                         <!-- Form groups will be generated dynamically -->
@@ -800,7 +824,7 @@
         </div>
         
         <div class="footer">
-            <p>Unified Product Code Generator System - Professional Manufacturing Solution</p>
+            <p>Unified Product Code Generator System - Corrected Encoding Version</p>
         </div>
     </div>
     
@@ -814,253 +838,7 @@
         let excelData = null;
         let originalConfig = null;
         
-        // Fixed-width UPC encoder class - CORRECTED VERSION
-        class FixedWidthUPCEncoder {
-            constructor() {
-                // Updated position map to include mounting frame
-                this.positionMap = [
-                    { name: 'reserved0', start: 0, width: 1 },     // Position 1: X
-                    { name: 'supplier', start: 1, width: 2 },      // Position 2-3: 1, 10, 11, 12 (2 chars)
-                    { name: 'model', start: 3, width: 4 },         // Position 4-7: ELPN (4 chars)
-                    { name: 'spacer1', start: 7, width: 1 },       // Position 8: X spacer
-                    { name: 'wattage', start: 8, width: 3 },       // Position 9-11: 6, 100, 15K (3 chars)
-                    { name: 'cct', start: 11, width: 2 },          // Position 12-13: 40 (2 chars)
-                    { name: 'spacer2', start: 13, width: 1 },      // Position 14: X spacer
-                    { name: 'size', start: 14, width: 2 },         // Position 15-16: 1, 10, 11, 12 (2 chars)
-                    { name: 'spacer3', start: 16, width: 1 },      // Position 17: X spacer
-                    { name: 'led', start: 17, width: 2 },          // Position 18-19: 1, 98, 99, 10, 11 (2 chars)
-                    { name: 'spacer4', start: 19, width: 1 },      // Position 20: X spacer
-                    { name: 'driver', start: 20, width: 1 },       // Position 21: 1, 10, 11, 12 (1 char now)
-                    { name: 'diffuser', start: 21, width: 1 },     // Position 22: 1, A, B (1 char)
-                    { name: 'housing', start: 22, width: 1 },      // Position 23: 1, A, B (1 char)
-                    { name: 'mounting', start: 23, width: 1 }      // Position 24: 1, 2, 3, X (1 char) - ADDED MOUNTING FRAME
-                ];
-                this.totalWidth = 24;
-            }
-            
-            encode(data) {
-                // Initialize with X's
-                let codeArray = new Array(this.totalWidth).fill('X');
-                
-                // Fill in each field at its correct position
-                this.positionMap.forEach(field => {
-                    if (field.name.startsWith('spacer')) {
-                        // Keep spacers as X
-                        codeArray[field.start] = 'X';
-                    } else if (data[field.name] && data[field.name] !== '') {
-                        const encoded = this.encodeField(data[field.name], field);
-                        
-                        // Place encoded value at correct position
-                        for (let i = 0; i < encoded.length && i < field.width; i++) {
-                            codeArray[field.start + i] = encoded[i];
-                        }
-                    }
-                });
-                
-                return codeArray.join('');
-            }
-            
-            encodeField(value, field) {
-                switch (field.name) {
-                    case 'supplier':
-                        return this.encodeSupplier(value, field.width);
-                    case 'model':
-                        return this.encodeModel(value, field.width);
-                    case 'wattage':
-                        return this.encodeWattage(value, field.width);
-                    case 'cct':
-                        return this.encodeCCT(value, field.width);
-                    case 'size':
-                        return this.encodeSize(value, field.width);
-                    case 'led':
-                        return this.encodeLED(value, field.width);
-                    case 'driver':
-                        return this.encodeDriver(value, field.width);
-                    case 'diffuser':
-                        return this.encodeDiffuser(value);
-                    case 'housing':
-                        return this.encodeHousing(value);
-                    case 'dimming':
-                        return this.encodeDimming(value);
-                    case 'ip':
-                        return this.encodeIP(value, field.width);
-                    case 'emergency':
-                        return this.encodeEmergency(value);
-                    case 'mounting':
-                        return this.encodeMounting(value);
-                    default:
-                        return value.toString().substring(0, field.width).padEnd(field.width, 'X');
-                }
-            }
-            
-            // FIXED: Remove leading zeros for single digits
-            encodeSupplier(value, width) {
-                const num = parseInt(value);
-                if (!isNaN(num)) {
-                    if (num <= 9) {
-                        return num.toString().padEnd(width, 'X'); // Just "1", "2", etc. padded to width
-                    } else if (num <= 99) {
-                        return num.toString(); // "10", "11", "12", etc.
-                    } else {
-                        return '99'; // Cap at 99
-                    }
-                }
-                // Handle text suppliers
-                const text = value.toString().toUpperCase();
-                return text.substring(0, width).padEnd(width, 'X');
-            }
-            
-            encodeModel(value, width) {
-                let model = value.toString().toUpperCase();
-                return model.substring(0, width).padEnd(width, 'X');
-            }
-            
-            // FIXED: Remove leading zeros for values under 100
-            encodeWattage(value, width) {
-                let wattStr = value.toString().toUpperCase();
-                
-                // Handle special cases first
-                if (wattStr.includes('1K') || wattStr === '1000') {
-                    return '1K'.padEnd(width, 'X'); // Just "1K"
-                } else if (wattStr.includes('12K') || wattStr === '12000') {
-                    return '12K'; // "12K"
-                } else if (wattStr.includes('15K') || wattStr === '15000') {
-                    return '15K'; // "15K"
-                } else {
-                    const watt = parseInt(wattStr.replace(/[^\d]/g, ''));
-                    if (!isNaN(watt)) {
-                        const wattString = watt.toString();
-                        return wattString.padEnd(width, 'X'); // No leading zeros
-                    }
-                }
-                return 'X'.repeat(width);
-            }
-            
-            encodeCCT(value, width) {
-                const cct = value.toString();
-                return cct.substring(0, width).padStart(width, '0');
-            }
-            
-            // FIXED: Remove leading zeros for single digits
-            encodeSize(value, width) {
-                const num = parseInt(value);
-                if (!isNaN(num)) {
-                    if (num <= 9) {
-                        return num.toString().padEnd(width, 'X'); // Just "1", "2", etc.
-                    } else if (num <= 99) {
-                        return num.toString(); // "10", "11", "12", etc.
-                    } else {
-                        return '99'; // Cap at 99
-                    }
-                }
-                const text = value.toString().toUpperCase();
-                return text.substring(0, width).padEnd(width, 'X');
-            }
-            
-            // FIXED: Remove leading zeros for single digits
-            encodeLED(value, width) {
-                const num = parseInt(value);
-                if (!isNaN(num)) {
-                    if (num === 98) {
-                        return '98'; // Tube Rod
-                    } else if (num === 99) {
-                        return '99'; // Other Brands
-                    } else if (num <= 9) {
-                        return num.toString().padEnd(width, 'X'); // Just "1", "2", etc.
-                    } else if (num <= 99) {
-                        return num.toString(); // "10", "11", "12", etc.
-                    } else {
-                        return '99'; // Cap at 99
-                    }
-                }
-                const text = value.toString().toUpperCase();
-                return text.substring(0, width).padEnd(width, 'X');
-            }
-            
-            // FIXED: Remove leading zeros, and reduced to 1 character width
-            encodeDriver(value, width) {
-                const num = parseInt(value);
-                if (!isNaN(num)) {
-                    if (num <= 9) {
-                        return num.toString(); // Just "1", "2", etc. (1 char)
-                    } else if (num === 10) {
-                        return 'A'; // Use A for 10
-                    } else if (num === 11) {
-                        return 'B'; // Use B for 11
-                    } else if (num === 12) {
-                        return 'C'; // Use C for 12
-                    } else if (num === 13) {
-                        return 'D'; // Use D for 13
-                    } else {
-                        return 'Z'; // Use Z for others
-                    }
-                }
-                return value.toString().charAt(0).toUpperCase();
-            }
-            
-            encodeDiffuser(value) {
-                const num = parseInt(value);
-                if (!isNaN(num)) {
-                    if (num <= 9) {
-                        return num.toString();
-                    } else {
-                        return String.fromCharCode(65 + (num - 10)); // A, B, C...
-                    }
-                }
-                return value.toString().charAt(0).toUpperCase();
-            }
-            
-            encodeHousing(value) {
-                const num = parseInt(value);
-                if (!isNaN(num)) {
-                    if (num <= 9) {
-                        return num.toString();
-                    } else {
-                        return String.fromCharCode(65 + (num - 10)); // A, B, C...
-                    }
-                }
-                return value.toString().charAt(0).toUpperCase();
-            }
-            
-            encodeDimming(value) {
-                return value.toString().charAt(0).toUpperCase();
-            }
-            
-            encodeIP(value, width) {
-                const ip = value.toString().replace(/[^\d]/g, '');
-                return ip.substring(0, width).padStart(width, '0');
-            }
-            
-            encodeEmergency(value) {
-                // Handle different emergency backup text formats
-                if (value.toString().toLowerCase().includes('no')) {
-                    return 'N'; // No Emergency Backup → N
-                } else if (value.toString().toLowerCase().includes('emergency')) {
-                    return 'E'; // Emergency Backup → E
-                }
-                return value.toString().charAt(0).toUpperCase();
-            }
-            
-            // NEW: Encode mounting frame
-            encodeMounting(value) {
-                // Extract first character from values like "X - Others" or "1 - Dampa"
-                const mounting = value.toString().split(' ')[0].charAt(0).toUpperCase();
-                const num = parseInt(mounting);
-                if (!isNaN(num)) {
-                    if (num <= 9) {
-                        return num.toString();
-                    } else {
-                        return String.fromCharCode(65 + (num - 10)); // A, B, C...
-                    }
-                }
-                return mounting;
-            }
-        }
-        
-        // Initialize encoder
-        const upcEncoder = new FixedWidthUPCEncoder();
-        
-        // Excel data manager class with localStorage fallback
+        // Excel data manager class
         class ExcelDataManager {
             constructor() {
                 this.storageKey = 'upcExcelData';
@@ -1100,17 +878,7 @@
                     return true;
                 } catch (error) {
                     console.error('Storage failed:', error);
-                    try {
-                        this.memoryStorage[this.storageKey] = JSON.stringify({
-                            version: this.version,
-                            timestamp: Date.now(),
-                            data: data
-                        });
-                        this.memoryStorage[this.fileNameKey] = fileName;
-                        return true;
-                    } catch (e) {
-                        return false;
-                    }
+                    return false;
                 }
             }
             
@@ -1168,27 +936,7 @@
         // Initialize data manager
         const dataManager = new ExcelDataManager();
         
-        // Check for persisted Excel data on load with error handling
-        function loadPersistedExcelData() {
-            try {
-                const persistedData = dataManager.retrieveData();
-                const persistedFileName = dataManager.retrieveFileName();
-                
-                if (persistedData && persistedFileName) {
-                    excelData = persistedData;
-                    updateExcelStatus(persistedFileName, Object.keys(excelData).length);
-                    
-                    setTimeout(() => {
-                        updateConfigFromExcel();
-                        showToast('Previously uploaded Excel data loaded successfully', 'success');
-                    }, 100);
-                }
-            } catch (error) {
-                console.warn('Could not load persisted Excel data:', error);
-            }
-        }
-        
-        // Handle file upload with improved error handling
+        // Handle file upload
         function handleFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -1201,33 +949,27 @@
             processExcelFile(file);
         }
         
-        // Process Excel file with Promise-based approach
+        // Process Excel file
         async function processExcelFile(file) {
             showProcessingIndicator(true);
             
             try {
-                const excelData = await readExcelFile(file);
+                const parsedData = await readExcelFile(file);
                 
-                if (Object.keys(excelData).length === 0) {
+                if (Object.keys(parsedData).length === 0) {
                     showToast('No valid data found in Excel file', 'warning');
                     showProcessingIndicator(false);
                     return;
                 }
                 
-                window.excelData = excelData;
-                dataManager.storeData(excelData, file.name);
+                excelData = parsedData;
+                dataManager.storeData(parsedData, file.name);
                 
-                await updateConfigFromExcelAsync(excelData);
-                updateExcelStatus(file.name, Object.keys(excelData).length);
+                await updateConfigFromExcel(parsedData);
+                updateExcelStatus(file.name, Object.keys(parsedData).length);
                 showProcessingIndicator(false);
                 
-                // Debug: Log the categories that were processed
-                console.log('Excel categories found:', Object.keys(excelData));
-                Object.entries(excelData).forEach(([category, data]) => {
-                    console.log(`${category}:`, data.options.slice(0, 5)); // Show first 5 options
-                });
-                
-                showToast(`Excel file processed successfully! ${Object.keys(excelData).length} categories loaded`, 'success');
+                showToast(`Excel file processed successfully! ${Object.keys(parsedData).length} categories loaded`, 'success');
                 
             } catch (error) {
                 console.error('Error processing Excel file:', error);
@@ -1236,7 +978,7 @@
             }
         }
         
-        // Promise-based Excel file reader
+        // Read Excel file
         function readExcelFile(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -1263,20 +1005,16 @@
             });
         }
         
-        // Parse Excel workbook - EXACT VALUES ONLY (no modifications)
+        // Parse Excel workbook
         function parseExcelWorkbook(workbook) {
             const parsedData = {};
             console.log('📊 Processing Excel workbook with sheets:', workbook.SheetNames);
             
             workbook.SheetNames.forEach(sheetName => {
-                console.log(`📄 Processing sheet: ${sheetName}`);
                 const worksheet = workbook.Sheets[sheetName];
-                
-                // Get the range of the worksheet
                 const range = XLSX.utils.decode_range(worksheet['!ref']);
-                console.log(`📐 Sheet range:`, range);
                 
-                // Find the header row - look for "Supplier ref"
+                // Find header row
                 let headerRow = -1;
                 for (let row = 0; row <= 10; row++) {
                     for (let col = range.s.c; col <= range.e.c; col++) {
@@ -1284,17 +1022,13 @@
                         const cell = worksheet[cellAddress];
                         if (cell && cell.v && cell.v.toString().toLowerCase().includes('supplier')) {
                             headerRow = row;
-                            console.log(`📋 Found header row at: ${row}`);
                             break;
                         }
                     }
                     if (headerRow !== -1) break;
                 }
                 
-                if (headerRow === -1) {
-                    console.log('❌ No valid header row found');
-                    return;
-                }
+                if (headerRow === -1) return;
                 
                 // Extract headers
                 const headers = [];
@@ -1306,18 +1040,14 @@
                     }
                 }
                 
-                console.log('📋 Headers found:', headers);
-                
-                // Process each column - READ EXACT VALUES ONLY
+                // Process each column
                 for (let col = range.s.c; col <= range.e.c; col++) {
                     const header = headers[col];
                     if (!header || header === '') continue;
                     
-                    console.log(`📝 Processing column: ${header}`);
                     const values = [];
                     const uniqueValues = new Set();
                     
-                    // Read all data in this column starting from data rows
                     for (let row = headerRow + 1; row <= range.e.r; row++) {
                         const cellAddress = XLSX.utils.encode_cell({r: row, c: col});
                         const cell = worksheet[cellAddress];
@@ -1326,55 +1056,36 @@
                             if (cellValue !== '' && !uniqueValues.has(cellValue)) {
                                 uniqueValues.add(cellValue);
                                 
-                                // Extract just the first part (number/letter) for code generation
                                 let valueForCode = cellValue;
-                                
-                                // For entries like "1 - Opal" or "1- Black", extract the "1"
                                 if (cellValue.includes(' - ') || cellValue.includes('- ')) {
                                     valueForCode = cellValue.split(/\s*-\s*/)[0].trim();
-                                }
-                                // For entries like "S - STD On/Off", extract the "S"
-                                else if (cellValue.match(/^[A-Z]\s*-/)) {
-                                    valueForCode = cellValue.charAt(0);
-                                }
-                                // For entries like "E -Emg", extract the "E"
-                                else if (cellValue.match(/^[A-Z]\s*-/)) {
-                                    valueForCode = cellValue.charAt(0);
                                 }
                                 
                                 values.push({
                                     value: valueForCode,
-                                    text: cellValue  // Keep EXACT text as it appears in Excel
+                                    text: cellValue
                                 });
-                                
-                                console.log(`  ✓ Added: ${valueForCode} → ${cellValue}`);
                             }
                         }
                     }
                     
                     if (values.length > 0) {
-                        // Sort values - numbers first, then letters
                         values.sort((a, b) => {
                             const numA = parseInt(a.value);
                             const numB = parseInt(b.value);
                             
-                            // Both are numbers
                             if (!isNaN(numA) && !isNaN(numB)) {
                                 return numA - numB;
                             }
-                            // A is number, B is not
                             if (!isNaN(numA) && isNaN(numB)) {
                                 return -1;
                             }
-                            // A is not number, B is number
                             if (isNaN(numA) && !isNaN(numB)) {
                                 return 1;
                             }
-                            // Both are text
                             return a.text.localeCompare(b.text);
                         });
                         
-                        // Add default "Select" option at the beginning
                         values.unshift({
                             value: "",
                             text: `Select ${header}`
@@ -1385,37 +1096,27 @@
                             options: values,
                             position: null
                         };
-                        
-                        console.log(`✅ Column "${header}" processed with ${values.length - 1} values`);
-                        console.log(`📋 First 5 options:`, values.slice(1, 6).map(v => v.text));
                     }
                 }
             });
             
-            console.log('🎯 Final parsed data:', parsedData);
             return parsedData;
         }
         
-        // Update configuration from Excel data with async handling
-        async function updateConfigFromExcelAsync(data) {
+        // Update configuration from Excel
+        async function updateConfigFromExcel(data) {
             if (!data) return;
             
             if (!originalConfig) {
                 originalConfig = JSON.parse(JSON.stringify(upcConfig));
             }
             
-            Object.keys(upcConfig).forEach(key => delete upcConfig[key]);
-            Object.assign(upcConfig, JSON.parse(JSON.stringify(originalConfig)));
-            
             Object.entries(data).forEach(([excelCategory, excelCategoryData]) => {
                 let matched = false;
                 
                 Object.entries(originalConfig).forEach(([position, existingCategory]) => {
                     if (isSimilarCategory(existingCategory.label, excelCategory)) {
-                        console.log(`✅ Matched "${excelCategory}" with "${existingCategory.label}" at position ${position}`);
-                        // For matched categories, REPLACE with Excel data instead of merging
-                        // Keep the first "Select..." option, then add all Excel options
-                        const selectOption = existingCategory.options[0]; // "Select..." option
+                        const selectOption = existingCategory.options[0];
                         const newOptions = [selectOption, ...excelCategoryData.options.slice(1)];
                         
                         upcConfig[position] = {
@@ -1428,7 +1129,6 @@
                 });
                 
                 if (!matched) {
-                    console.log(`❌ No match found for "${excelCategory}" - adding as new category`);
                     let newPosition = 25;
                     while (upcConfig[newPosition]) {
                         newPosition++;
@@ -1436,6 +1136,7 @@
                     
                     upcConfig[newPosition] = {
                         label: excelCategory,
+                        bandwidth: 1,
                         options: excelCategoryData.options,
                         position: newPosition
                     };
@@ -1445,58 +1146,20 @@
             return new Promise(resolve => {
                 requestAnimationFrame(() => {
                     reinitializeForm();
-                    
-                    // Debug: Show final configuration
-                    console.log('📋 Final UPC Configuration after Excel processing:');
-                    Object.entries(upcConfig).forEach(([position, config]) => {
-                        console.log(`Position ${position} (${config.label}):`, config.options.slice(0, 10).map(o => o.text));
-                    });
-                    
                     resolve();
                 });
             });
         }
         
-        // Legacy sync version for backward compatibility
-        function updateConfigFromExcel() {
-            if (window.excelData) {
-                updateConfigFromExcelAsync(window.excelData);
-            }
-        }
-        
-        // Improved form reinitialization with proper cleanup
-        function reinitializeForm() {
-            const formGrid = document.getElementById('formGrid');
-            
-            while (formGrid.firstChild) {
-                formGrid.removeChild(formGrid.firstChild);
-            }
-            
-            initializeForm();
-            updateCode();
-        }
-        
-        // Check if two category names are similar - ENHANCED VERSION
+        // Check if categories are similar
         function isSimilarCategory(existing, excel) {
             const normalize = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
             const existingNorm = normalize(existing);
             const excelNorm = normalize(excel);
             
-            console.log(`🔍 Checking match: "${existing}" (${existingNorm}) vs "${excel}" (${excelNorm})`);
+            if (existingNorm === excelNorm) return true;
+            if (existingNorm.includes(excelNorm) || excelNorm.includes(existingNorm)) return true;
             
-            // Direct exact matches
-            if (existingNorm === excelNorm) {
-                console.log(`✅ Exact match found!`);
-                return true;
-            }
-            
-            // Contains matches
-            if (existingNorm.includes(excelNorm) || excelNorm.includes(existingNorm)) {
-                console.log(`✅ Contains match found!`);
-                return true;
-            }
-            
-            // Specific mapping for your Excel columns
             const specificMappings = {
                 'Power Rating (Watts)': ['wattage', 'watts', 'watt', 'power'],
                 'Supplier Reference': ['supplierref', 'supplier', 'vendor'],
@@ -1507,23 +1170,18 @@
                 'Driver Brand': ['driverbrand', 'driver'],
                 'Diffuser Type': ['diffuser'],
                 'Housing Material': ['housing'],
-                'Dimming Control': ['dimming'],
-                'IP Protection Rating': ['ip', 'rating'],
                 'Emergency Backup': ['emergency'],
                 'Mounting Frame': ['mounting', 'frame']
             };
             
-            // Check specific mappings
             for (const [configLabel, excelVariants] of Object.entries(specificMappings)) {
                 if (normalize(configLabel) === existingNorm) {
                     if (excelVariants.some(variant => excelNorm.includes(variant) || variant.includes(excelNorm))) {
-                        console.log(`✅ Specific mapping match: ${configLabel} matches ${excel}`);
                         return true;
                     }
                 }
             }
             
-            console.log(`❌ No match found`);
             return false;
         }
         
@@ -1540,10 +1198,10 @@
             statusDiv.style.display = 'block';
         }
         
-        // Remove Excel data with improved cleanup
+        // Remove Excel data
         function removeExcelData() {
             if (confirm('Are you sure you want to remove the Excel configuration? This will restore default settings.')) {
-                window.excelData = null;
+                excelData = null;
                 dataManager.clearData();
                 
                 if (originalConfig) {
@@ -1552,12 +1210,9 @@
                 }
                 
                 document.getElementById('excelFile').value = '';
-                
-                requestAnimationFrame(() => {
-                    document.getElementById('excelStatus').style.display = 'none';
-                    reinitializeForm();
-                    showToast('Excel configuration removed. Default settings restored.', 'success');
-                });
+                document.getElementById('excelStatus').style.display = 'none';
+                reinitializeForm();
+                showToast('Excel configuration removed. Default settings restored.', 'success');
             }
         }
         
@@ -1567,7 +1222,7 @@
             indicator.style.display = show ? 'block' : 'none';
         }
         
-        // Setup drag and drop functionality
+        // Setup drag and drop
         function setupDragAndDrop() {
             const uploadArea = document.getElementById('uploadArea');
             
@@ -1605,31 +1260,67 @@
             });
         }
         
-        // UPC Configuration Data (Only active positions)
+        // Load persisted Excel data
+        function loadPersistedExcelData() {
+            try {
+                const persistedData = dataManager.retrieveData();
+                const persistedFileName = dataManager.retrieveFileName();
+                
+                if (persistedData && persistedFileName) {
+                    excelData = persistedData;
+                    updateExcelStatus(persistedFileName, Object.keys(excelData).length);
+                    
+                    setTimeout(() => {
+                        updateConfigFromExcel(excelData);
+                        showToast('Previously uploaded Excel data loaded successfully', 'success');
+                    }, 100);
+                }
+            } catch (error) {
+                console.warn('Could not load persisted Excel data:', error);
+            }
+        }
+        
+        // Reinitialize form
+        function reinitializeForm() {
+            const formGrid = document.getElementById('formGrid');
+            
+            while (formGrid.firstChild) {
+                formGrid.removeChild(formGrid.firstChild);
+            }
+            
+            initializeForm();
+            updateCode();
+        }
+        
+        // CORRECTED UPC Configuration Data with proper position mapping
         const upcConfig = {
             1: {
                 label: "Supplier Reference",
+                bandwidth: 2,
+                actualPositions: "0-1",
                 options: [
                     { value: "", text: "Select Supplier Reference" },
-                    { value: "1", text: "ELF" },
-                    { value: "2", text: "ELFSKD" },
-                    { value: "3", text: "Ningbo Lumen" },
-                    { value: "4", text: "Venas" },
-                    { value: "5", text: "Tong Hang" },
-                    { value: "6", text: "Virtue Strong" },
-                    { value: "7", text: "Rovos" },
-                    { value: "8", text: "Ecoon" },
-                    { value: "9", text: "Upshine" },
-                    { value: "10", text: "F&K" },
-                    { value: "11", text: "CJZ" },
-                    { value: "12", text: "Supplier 12" },
-                    { value: "13", text: "Supplier 13" },
-                    { value: "14", text: "Supplier 14" },
-                    { value: "15", text: "Supplier 15" }
+                    { value: "1", text: "1 - ELF" },
+                    { value: "2", text: "2 - ELFSKD" },
+                    { value: "3", text: "3 - Ningbo Lumen" },
+                    { value: "4", text: "4 - Venas" },
+                    { value: "5", text: "5 - Tong Hang" },
+                    { value: "6", text: "6 - Virtue Strong" },
+                    { value: "7", text: "7 - Rovos" },
+                    { value: "8", text: "8 - Ecoon" },
+                    { value: "9", text: "9 - Upshine" },
+                    { value: "10", text: "10 - F&K" },
+                    { value: "11", text: "11 - CJZ" },
+                    { value: "12", text: "12 - Supplier 12" },
+                    { value: "13", text: "13 - Supplier 13" },
+                    { value: "14", text: "14 - Supplier 14" },
+                    { value: "15", text: "15 - Supplier 15" }
                 ]
             },
             3: {
                 label: "Product Model",
+                bandwidth: 4,
+                actualPositions: "2-5",
                 options: [
                     { value: "", text: "Select Product Model" },
                     { value: "ELPN", text: "ELPN - Panel Light" },
@@ -1645,188 +1336,123 @@
                     { value: "HB0B", text: "HB0B - High Bay 0B" },
                     { value: "HB40", text: "HB40 - High Bay 40" },
                     { value: "HB50", text: "HB50 - High Bay 50" },
-                    { value: "HB30", text: "HB30 - High Bay 30" },
-                    { value: "ELPE", text: "ELPE - Panel Extended" },
-                    { value: "ESQL", text: "ESQL - Square Light" },
-                    { value: "FT20", text: "FT20 - Flood 20" },
-                    { value: "FT16", text: "FT16 - Flood 16" },
-                    { value: "FT80", text: "FT80 - Flood 80" },
-                    { value: "FT50", text: "FT50 - Flood 50" },
-                    { value: "HF50", text: "HF50 - High Flux 50" },
-                    { value: "HF80", text: "HF80 - High Flux 80" },
-                    { value: "HF84", text: "HF84 - High Flux 84" },
-                    { value: "HF85", text: "HF85 - High Flux 85" },
-                    { value: "HF86", text: "HF86 - High Flux 86" },
-                    { value: "HF88", text: "HF88 - High Flux 88" }
+                    { value: "HB30", text: "HB30 - High Bay 30" }
                 ]
             },
-            7: {
+            8: {
                 label: "Power Rating (Watts)",
+                bandwidth: 3,
+                actualPositions: "7-9",
                 options: [
                     { value: "", text: "Select Power Rating" },
+                    { value: "6", text: "6W" },
                     { value: "12", text: "12W" },
                     { value: "15", text: "15W" },
-                    { value: "16", text: "16W" },
                     { value: "18", text: "18W" },
                     { value: "20", text: "20W" },
                     { value: "30", text: "30W" },
                     { value: "36", text: "36W" },
                     { value: "40", text: "40W" },
-                    { value: "42", text: "42W" },
-                    { value: "45", text: "45W" },
                     { value: "50", text: "50W" },
                     { value: "60", text: "60W" },
                     { value: "80", text: "80W" },
                     { value: "100", text: "100W" },
                     { value: "150", text: "150W" },
                     { value: "200", text: "200W" },
-                    { value: "250", text: "250W" },
-                    { value: "1K", text: "1000W" },
-                    { value: "12K", text: "12000W" },
-                    { value: "15K", text: "15000W" }
+                    { value: "12K", text: "12000W (12K)" }
                 ]
             },
-            10: {
+            11: {
                 label: "Color Temperature (CCT)",
+                bandwidth: 2,
+                actualPositions: "10-11",
                 options: [
                     { value: "", text: "Select Color Temperature" },
                     { value: "27", text: "2700K - Warm White" },
                     { value: "30", text: "3000K - Soft White" },
-                    { value: "32", text: "3200K - Neutral White" },
                     { value: "40", text: "4000K - Cool White" },
                     { value: "50", text: "5000K - Daylight" },
-                    { value: "60", text: "6000K - Cool Daylight" },
                     { value: "65", text: "6500K - Bright Daylight" }
                 ]
             },
-            12: {
+            14: {
                 label: "Physical Dimensions",
+                bandwidth: 2,
+                actualPositions: "13-14",
                 options: [
                     { value: "", text: "Select Physical Dimensions" },
-                    { value: "1", text: "595×595×30mm" },
-                    { value: "2", text: "595×595×35mm" },
-                    { value: "3", text: "1295×595×30mm" },
-                    { value: "4", text: "665×84mm" },
-                    { value: "5", text: "1275×84mm" },
-                    { value: "6", text: "1550×84mm" },
-                    { value: "7", text: "Ø60mm" },
-                    { value: "8", text: "Ø80mm" },
-                    { value: "9", text: "Ø100mm" },
-                    { value: "10", text: "Ø120mm" },
-                    { value: "11", text: "Ø160mm" },
-                    { value: "12", text: "Ø190mm" },
-                    { value: "13", text: "Ø230mm" },
-                    { value: "14", text: "1295×295×30mm" }
+                    { value: "1", text: "1 - 595×595×30mm" },
+                    { value: "2", text: "2 - 595×595×35mm" },
+                    { value: "3", text: "3 - 1295×595×30mm" },
+                    { value: "10", text: "10 - Ø120mm" },
+                    { value: "11", text: "11 - Ø160mm" },
+                    { value: "12", text: "12 - Ø190mm" }
                 ]
             },
-            14: {
+            17: {
                 label: "LED Chip Brand",
+                bandwidth: 2,
+                actualPositions: "16-17",
                 options: [
                     { value: "", text: "Select LED Chip Brand" },
-                    { value: "1", text: "Lumiled" },
-                    { value: "2", text: "Osram" },
-                    { value: "3", text: "Seoul Semiconductor" },
-                    { value: "4", text: "Samsung" },
-                    { value: "5", text: "CREE" },
-                    { value: "6", text: "Edison Opto" },
-                    { value: "7", text: "Everlite" },
-                    { value: "98", text: "Tube Rod LED" },
-                    { value: "99", text: "Other Brand" }
-                ]
-            },
-            16: {
-                label: "Driver Brand",
-                options: [
-                    { value: "", text: "Select Driver Brand" },
-                    { value: "1", text: "Tridonic" },
-                    { value: "2", text: "Philips" },
-                    { value: "3", text: "VS Electronics" },
-                    { value: "4", text: "TCI" },
-                    { value: "5", text: "Mean Well" },
-                    { value: "6", text: "ELF" },
-                    { value: "7", text: "Inventronics" },
-                    { value: "8", text: "Eaglerise" },
-                    { value: "9", text: "Boke" },
-                    { value: "10", text: "Lifud" },
-                    { value: "11", text: "Bright Power" },
-                    { value: "12", text: "Osram Driver" },
-                    { value: "13", text: "One Electronic" }
-                ]
-            },
-            18: {
-                label: "Diffuser Type",
-                options: [
-                    { value: "", text: "Select Diffuser Type" },
-                    { value: "1", text: "Opal Diffuser" },
-                    { value: "2", text: "Micro Prism" },
-                    { value: "3", text: "Prismatic" },
-                    { value: "4", text: "Clear Glass" },
-                    { value: "5", text: "Centre Frosted" },
-                    { value: "6", text: "Full Frosted" },
-                    { value: "7", text: "Full Moon Design" },
-                    { value: "8", text: "Half Moon Design" },
-                    { value: "9", text: "PC Clear" }
+                    { value: "1", text: "1 - Lumiled" },
+                    { value: "2", text: "2 - Osram" },
+                    { value: "3", text: "3 - Seoul Semiconductor" },
+                    { value: "4", text: "4 - Samsung" },
+                    { value: "5", text: "5 - CREE" },
+                    { value: "98", text: "98 - Tube Rod LED" },
+                    { value: "99", text: "99 - Other Brand" }
                 ]
             },
             19: {
-                label: "Housing Material",
+                label: "Driver Brand",
+                bandwidth: 2,
+                actualPositions: "19-20",
                 options: [
-                    { value: "", text: "Select Housing Material" },
-                    { value: "1", text: "Black Housing" },
-                    { value: "2", text: "White Housing" },
-                    { value: "3", text: "Silver Housing" },
-                    { value: "4", text: "Grey Housing" },
-                    { value: "5", text: "Graphite Housing" },
-                    { value: "6", text: "PC Housing" },
-                    { value: "7", text: "GRP Housing" }
-                ]
-            },
-            20: {
-                label: "Dimming Control",
-                options: [
-                    { value: "", text: "Select Dimming Control" },
-                    { value: "S", text: "Standard On/Off" },
-                    { value: "D", text: "DALI Dimming" },
-                    { value: "P", text: "Phase Cut Dimming" },
-                    { value: "0", text: "0-10V Dimming" },
-                    { value: "1", text: "1-10V Dimming" },
-                    { value: "T", text: "Triac Dimming" }
+                    { value: "", text: "Select Driver Brand" },
+                    { value: "1", text: "1 - Tridonic" },
+                    { value: "2", text: "2 - Philips" },
+                    { value: "3", text: "3 - VS Electronics" },
+                    { value: "4", text: "4 - TCI" },
+                    { value: "5", text: "5 - Mean Well" },
+                    { value: "10", text: "10 - Lifud" },
+                    { value: "11", text: "11 - Bright Power" },
+                    { value: "12", text: "12 - Osram Driver" }
                 ]
             },
             21: {
-                label: "IP Protection Rating",
+                label: "Diffuser Type",
+                bandwidth: 1,
+                actualPositions: "21",
                 options: [
-                    { value: "", text: "Select IP Rating" },
-                    { value: "20", text: "IP20 - Indoor Use" },
-                    { value: "40", text: "IP40 - Splash Resistant" },
-                    { value: "44", text: "IP44 - Water Resistant" },
-                    { value: "54", text: "IP54 - Dust/Water Protected" },
-                    { value: "65", text: "IP65 - Dust/Jet Water Proof" },
-                    { value: "66", text: "IP66 - High Pressure Water Proof" }
+                    { value: "", text: "Select Diffuser Type" },
+                    { value: "1", text: "1 - Opal Diffuser" },
+                    { value: "2", text: "2 - Micro Prism" },
+                    { value: "3", text: "3 - Prismatic" },
+                    { value: "A", text: "A - Clear Glass" },
+                    { value: "B", text: "B - Full Frosted" }
+                ]
+            },
+            22: {
+                label: "Housing Material",
+                bandwidth: 1,
+                actualPositions: "22",
+                options: [
+                    { value: "", text: "Select Housing Material" },
+                    { value: "1", text: "1 - Black Housing" },
+                    { value: "2", text: "2 - White Housing" },
+                    { value: "A", text: "A - Silver Housing" },
+                    { value: "B", text: "B - Grey Housing" }
                 ]
             },
             23: {
                 label: "Emergency Backup",
+                bandwidth: 1,
+                actualPositions: "23",
                 options: [
                     { value: "", text: "Select Emergency Option" },
-                    { value: "E", text: "Emergency Backup Included" },
-                    { value: "N", text: "No Emergency Backup" }
-                ]
-            },
-            24: {
-                label: "Mounting Frame",
-                options: [
-                    { value: "", text: "Select Mounting Frame" },
-                    { value: "1", text: "Dampa Frame" },
-                    { value: "2", text: "Surface Mount" },
-                    { value: "3", text: "Gypsum Frame" },
-                    { value: "4", text: "Full Moon Frame" },
-                    { value: "5", text: "Full Grill Frame" },
-                    { value: "6", text: "Half Moon Frame" },
-                    { value: "7", text: "Oval Full Frame" },
-                    { value: "8", text: "Oval Half Frame" },
-                    { value: "9", text: "Oval Grill Frame" },
-                    { value: "X", text: "Custom/Other Frame" }
+                    { value: "E", text: "E - Emergency Backup" },
+                    { value: "N", text: "N - No Emergency" }
                 ]
             }
         };
@@ -1842,7 +1468,7 @@
                 formGroup.className = 'form-group';
                 
                 const label = document.createElement('label');
-                label.innerHTML = `${config.label}<span class="position-badge">Position ${position}</span>`;
+                label.innerHTML = `${config.label}<span class="position-badge">Pos ${config.actualPositions}</span><span class="bandwidth-badge">${config.bandwidth} chars</span>`;
                 
                 const select = document.createElement('select');
                 select.id = `pos${position}`;
@@ -1863,256 +1489,214 @@
             updateCode();
         }
         
-        // Update the generated code using fixed-width encoder
+        // CORRECTED: Update the generated code with proper bandwidth allocation
         function updateCode() {
-            const formData = {};
+            console.log('🔧 === CORRECTED UPC ENCODING ===');
             
-            console.log('🔧 === FORM DATA COLLECTION ===');
-            Object.keys(upcConfig).forEach(position => {
-                const select = document.getElementById(`pos${position}`);
-                if (select && select.value !== '') {
-                    const fieldName = mapPositionToField(position);
-                    if (fieldName) {
-                        formData[fieldName] = select.value;
-                        console.log(`🔧 Position ${position} (${upcConfig[position].label}) → Field: ${fieldName} = "${select.value}"`);
-                    } else {
-                        console.log(`❌ Position ${position} (${upcConfig[position].label}) → NO MAPPING FOUND`);
-                    }
-                } else {
-                    console.log(`⚪ Position ${position} (${upcConfig[position].label}) → Empty/Not Selected`);
-                }
-            });
+            // Initialize 24-character array with X's
+            let codeArray = new Array(24).fill('X');
             
-            console.log('🎯 Final formData object:', formData);
-            
-            // DYNAMIC 24-CHARACTER ENCODING - X spacers get eaten by 2-digit values
-            console.log('🔧 === DYNAMIC ENCODING (24 chars) ===');
-            let code = '';
-            
-            // Position 0: X (always)
-            code += 'X';
-            console.log('Step 0: X → Code so far: "' + code + '"');
-            
-            // Position 1: Supplier (1 char, but can expand into position 2 if 2-digit)
-            let supplier = 'X';
-            if (formData.supplier) {
-                const num = parseInt(formData.supplier);
+            // CORRECTED: Supplier Reference (Positions 0-1, 2 bandwidth total)
+            const supplierSelect = document.getElementById('pos1');
+            if (supplierSelect && supplierSelect.value !== '') {
+                const supplier = supplierSelect.value;
+                const num = parseInt(supplier);
                 if (!isNaN(num)) {
-                    supplier = num.toString();
-                } else {
-                    supplier = formData.supplier.toString().charAt(0);
+                    if (num <= 9) {
+                        codeArray[0] = 'X';
+                        codeArray[1] = num.toString();
+                        console.log(`Position 0-1: Supplier ${num} → X${num}`);
+                    } else {
+                        const supplierStr = num.toString().substring(0, 2);
+                        codeArray[0] = supplierStr[0];
+                        codeArray[1] = supplierStr[1];
+                        console.log(`Position 0-1: Supplier ${num} → ${supplierStr}`);
+                    }
                 }
+            } else {
+                // Default: X in first position when no supplier selected
+                codeArray[0] = 'X';
             }
-            code += supplier;
-            console.log('Step 1: Supplier "' + supplier + '" → Code so far: "' + code + '"');
             
-            // Position 2-5: Model (4 chars) - but if supplier is 2-digit, model starts at pos 3
-            let model = 'XXXX';
-            if (formData.model) {
-                model = formData.model.toString().toUpperCase().padEnd(4, 'X').substring(0, 4);
+            // Product Model (Positions 2-5, 4 bandwidth)
+            const modelSelect = document.getElementById('pos3');
+            if (modelSelect && modelSelect.value !== '') {
+                const model = modelSelect.value.toString().toUpperCase().padEnd(4, 'X').substring(0, 4);
+                for (let i = 0; i < 4; i++) {
+                    codeArray[2 + i] = model[i];
+                }
+                console.log(`Position 2-5: Model → ${model}`);
             }
-            code += model;
-            console.log('Step 2-5: Model "' + model + '" → Code so far: "' + code + '"');
             
-            // Position 6: X (always)
-            code += 'X';
-            console.log('Step 6: X → Code so far: "' + code + '"');
+            // Position 6: Always X (spacer)
+            codeArray[6] = 'X';
+            console.log('Position 6: Spacer → X');
             
-            // Position 7-8: Wattage (2 chars)
-            let wattage = 'XX';
-            if (formData.wattage) {
-                const wattStr = formData.wattage.toString().toUpperCase();
-                if (wattStr.includes('1K') || wattStr === '1000') {
-                    wattage = '1K';
-                } else if (wattStr.includes('12K') || wattStr === '12000') {
-                    wattage = '12';
-                } else if (wattStr.includes('15K') || wattStr === '15000') {
-                    wattage = '15';
+            // CORRECTED: Power Rating (Positions 7-9, 3 bandwidth)
+            const wattageSelect = document.getElementById('pos8');
+            if (wattageSelect && wattageSelect.value !== '') {
+                const wattage = wattageSelect.value.toString().toUpperCase();
+                console.log(`🔧 Processing wattage: "${wattage}"`);
+                
+                if (wattage === '12K') {
+                    // Special case: 12K takes all 3 positions
+                    codeArray[7] = '1';
+                    codeArray[8] = '2';
+                    codeArray[9] = 'K';
+                    console.log('Position 7-9: 12K → 12K');
                 } else {
-                    const watt = parseInt(wattStr.replace(/[^\d]/g, ''));
+                    const watt = parseInt(wattage.replace(/[^\d]/g, ''));
                     if (!isNaN(watt)) {
                         if (watt <= 9) {
-                            wattage = watt.toString() + 'X';
-                        } else if (watt < 100) {
-                            wattage = watt.toString();
+                            // Single digit: XX + digit
+                            codeArray[7] = 'X';
+                            codeArray[8] = 'X';
+                            codeArray[9] = watt.toString();
+                            console.log(`Position 7-9: ${watt}W → XX${watt}`);
+                        } else if (watt <= 99) {
+                            // Double digit: X + double digit
+                            const wattStr = watt.toString().padStart(2, '0');
+                            codeArray[7] = 'X';
+                            codeArray[8] = wattStr[0];
+                            codeArray[9] = wattStr[1];
+                            console.log(`Position 7-9: ${watt}W → X${wattStr}`);
                         } else {
-                            wattage = watt.toString().substring(0, 2);
+                            // Triple digit: all 3 positions
+                            const wattStr = watt.toString().substring(0, 3);
+                            codeArray[7] = wattStr[0] || 'X';
+                            codeArray[8] = wattStr[1] || 'X';
+                            codeArray[9] = wattStr[2] || 'X';
+                            console.log(`Position 7-9: ${watt}W → ${wattStr}`);
                         }
                     }
                 }
             }
-            code += wattage;
-            console.log('Step 7-8: Wattage "' + wattage + '" → Code so far: "' + code + '"');
             
-            // Position 9-10: CCT (2 chars) - Handle both numeric and text values
-            let cct = 'XX';
-            if (formData.cct) {
-                const cctStr = formData.cct.toString();
-                console.log('🔧 CCT raw value: "' + cctStr + '"');
-                
-                // Check if it starts with "GC" (Green Color)
-                if (cctStr.toUpperCase().includes('GC') || cctStr.toLowerCase().includes('green')) {
-                    cct = 'GC'; // Keep as GC for Green Color
-                    console.log('🔧 Green Color CCT: "' + cctStr + '" → "GC"');
-                } else {
-                    // Extract numeric value
-                    const numMatch = cctStr.match(/\d+/);
-                    if (numMatch) {
-                        const num = numMatch[0];
-                        cct = num.padEnd(2, '0').substring(0, 2);
-                        console.log('🔧 Numeric CCT: "' + cctStr + '" → "' + cct + '"');
-                    } else {
-                        // If no number found, take first 2 characters
-                        cct = cctStr.substring(0, 2).toUpperCase();
-                        console.log('🔧 Text CCT: "' + cctStr + '" → "' + cct + '"');
-                    }
-                }
+            // Color Temperature (Positions 10-11, 2 bandwidth)
+            const cctSelect = document.getElementById('pos11');
+            if (cctSelect && cctSelect.value !== '') {
+                const cct = cctSelect.value.toString().padStart(2, '0').substring(0, 2);
+                codeArray[10] = cct[0];
+                codeArray[11] = cct[1];
+                console.log(`Position 10-11: CCT → ${cct}`);
             }
-            code += cct;
-            console.log('Step 9-10: CCT "' + cct + '" → Code so far: "' + code + '"');
             
-            // Position 11-12: Size section (1 char + dynamic X) - X gets eaten if size is 2-digit
-            let sizeSection = 'XX';
-            if (formData.size) {
-                const num = parseInt(formData.size);
-                console.log('🔧 Size raw value: "' + formData.size + '" → parsed: ' + num);
+            // Position 12: Always X (spacer)
+            codeArray[12] = 'X';
+            console.log('Position 12: Spacer → X');
+            
+            // Physical Dimensions (Positions 13-14, 2 bandwidth)
+            const sizeSelect = document.getElementById('pos14');
+            if (sizeSelect && sizeSelect.value !== '') {
+                const size = sizeSelect.value;
+                const num = parseInt(size);
                 if (!isNaN(num)) {
                     if (num <= 9) {
-                        sizeSection = 'X' + num.toString(); // "X1" (spacer + single digit)
-                        console.log('🔧 Single digit size: X + ' + num + ' = "' + sizeSection + '"');
+                        codeArray[13] = num.toString();
+                        codeArray[14] = 'X';
+                        console.log(`Position 13-14: Size ${num} → ${num}X`);
                     } else {
-                        sizeSection = num.toString().substring(0, 2); // "13" (2 digits eat the spacer)
-                        console.log('🔧 Double digit size: "' + num + '" → "' + sizeSection + '" (eats spacer)');
+                        const sizeStr = num.toString().substring(0, 2);
+                        codeArray[13] = sizeStr[0];
+                        codeArray[14] = sizeStr[1];
+                        console.log(`Position 13-14: Size ${num} → ${sizeStr}`);
                     }
-                } else {
-                    sizeSection = 'X' + formData.size.toString().charAt(0);
-                    console.log('🔧 Text size: X + first char = "' + sizeSection + '"');
                 }
             }
-            code += sizeSection;
-            console.log('Step 11-12: Size section "' + sizeSection + '" → Code so far: "' + code + '"');
             
-            // Position 13-14: LED section (1 char + dynamic X) - X gets eaten if LED is 2-digit  
-            let ledSection = 'XX';
-            if (formData.led) {
-                const num = parseInt(formData.led);
-                console.log('🔧 LED raw value: "' + formData.led + '" → parsed: ' + num);
+            // Position 15: Always X (spacer)
+            codeArray[15] = 'X';
+            console.log('Position 15: Spacer → X');
+            
+            // LED Chip Brand (Positions 16-17, 2 bandwidth)
+            const ledSelect = document.getElementById('pos17');
+            if (ledSelect && ledSelect.value !== '') {
+                const led = ledSelect.value;
+                const num = parseInt(led);
                 if (!isNaN(num)) {
                     if (num <= 9) {
-                        ledSection = 'X' + num.toString(); // "X1" (spacer + single digit)
-                        console.log('🔧 Single digit LED: X + ' + num + ' = "' + ledSection + '"');
-                    } else if (num === 98 || num === 99) {
-                        ledSection = num.toString(); // "98", "99" (2 digits eat the spacer)
-                        console.log('🔧 Special LED: "' + num + '" → "' + ledSection + '" (eats spacer)');
+                        codeArray[16] = num.toString();
+                        codeArray[17] = 'X';
+                        console.log(`Position 16-17: LED ${num} → ${num}X`);
                     } else {
-                        ledSection = num.toString().substring(0, 2); // "11" (2 digits eat the spacer)
-                        console.log('🔧 Double digit LED: "' + num + '" → "' + ledSection + '" (eats spacer)');
+                        const ledStr = num.toString().substring(0, 2);
+                        codeArray[16] = ledStr[0];
+                        codeArray[17] = ledStr[1];
+                        console.log(`Position 16-17: LED ${num} → ${ledStr}`);
                     }
-                } else {
-                    ledSection = 'X' + formData.led.toString().charAt(0);
-                    console.log('🔧 Text LED: X + first char = "' + ledSection + '"');
                 }
             }
-            code += ledSection;
-            console.log('Step 13-14: LED section "' + ledSection + '" → Code so far: "' + code + '"');
             
-            // Position 15: Driver (1 char, but if 2-digit, second digit eats the following position)
-            let driver = 'X';
-            let driverOverflow = ''; // Second digit that will eat the next position
-            if (formData.driver) {
-                const num = parseInt(formData.driver);
-                console.log('🔧 Driver raw value: "' + formData.driver + '" → parsed: ' + num);
+            // Position 18: Always X (spacer)
+            codeArray[18] = 'X';
+            console.log('Position 18: Spacer → X');
+            
+            // CORRECTED: Driver Brand (Positions 19-20, 2 bandwidth - NO MORE OVERFLOW!)
+            const driverSelect = document.getElementById('pos19');
+            if (driverSelect && driverSelect.value !== '') {
+                const driver = driverSelect.value;
+                const num = parseInt(driver);
                 if (!isNaN(num)) {
                     if (num <= 9) {
-                        driver = num.toString(); // "6"
-                        driverOverflow = ''; // No overflow
-                        console.log('🔧 Single digit driver: "' + driver + '" (no overflow)');
+                        codeArray[19] = num.toString();
+                        codeArray[20] = 'X';
+                        console.log(`Position 19-20: Driver ${num} → ${num}X`);
                     } else {
-                        driver = num.toString().substring(0, 1); // First digit "1"
-                        driverOverflow = num.toString().substring(1, 2); // Second digit "1"
-                        console.log('🔧 Double digit driver: "' + num + '" → first digit "' + driver + '", overflow "' + driverOverflow + '"');
+                        const driverStr = num.toString().substring(0, 2);
+                        codeArray[19] = driverStr[0];
+                        codeArray[20] = driverStr[1];
+                        console.log(`Position 19-20: Driver ${num} → ${driverStr}`);
                     }
-                } else {
-                    driver = formData.driver.toString().charAt(0);
-                    console.log('🔧 Text driver: "' + driver + '"');
                 }
             }
-            code += driver;
-            console.log('Step 15: Driver "' + driver + '" (overflow: "' + driverOverflow + '") → Code so far: "' + code + '"');
             
-            // Position 17: Diffuser (1 char) - but gets replaced by driver overflow if exists
-            let diffuser = formData.diffuser || 'X';
-            if (driverOverflow) {
-                diffuser = driverOverflow; // Driver's second digit eats this position
-                console.log('Step 17: Driver overflow "' + driverOverflow + '" replaces diffuser → Code so far: "' + code + driverOverflow + '"');
-            } else {
-                console.log('Step 17: Diffuser "' + diffuser + '" → Code so far: "' + code + diffuser + '"');
+            // CORRECTED: Diffuser Type (Position 21, 1 bandwidth - NO MORE INTERFERENCE!)
+            const diffuserSelect = document.getElementById('pos21');
+            if (diffuserSelect && diffuserSelect.value !== '') {
+                const diffuser = diffuserSelect.value.toString().charAt(0);
+                codeArray[21] = diffuser;
+                console.log(`Position 21: Diffuser → ${diffuser}`);
             }
-            code += diffuser;
             
-            // Position 18: Housing (1 char)
-            const housing = formData.housing || 'X';
-            code += housing;
-            console.log('Step 18: Housing "' + housing + '" → Code so far: "' + code + '"');
-            
-            // Position 19: Dimming (1 char)
-            const dimming = formData.dimming || 'X';
-            code += dimming;
-            console.log('Step 19: Dimming "' + dimming + '" → Code so far: "' + code + '"');
-            
-            // Position 20-21: IP (2 chars) - Single digit gets duplicated, double digit stays as-is
-            let ip = 'XX';
-            if (formData.ip) {
-                const ipNum = formData.ip.toString().replace(/[^\d]/g, '');
-                console.log('🔧 IP raw value: "' + formData.ip + '" → extracted digits: "' + ipNum + '"');
-                if (ipNum.length === 1) {
-                    ip = ipNum + ipNum; // "4" becomes "44"
-                    console.log('🔧 Single digit IP: "' + ipNum + '" → "' + ip + '" (duplicated)');
-                } else if (ipNum.length >= 2) {
-                    ip = ipNum.substring(0, 2); // "65" stays "65", "654" becomes "65"
-                    console.log('🔧 Multi-digit IP: "' + ipNum + '" → "' + ip + '" (first 2 digits)');
-                }
+            // Housing Material (Position 22, 1 bandwidth)
+            const housingSelect = document.getElementById('pos22');
+            if (housingSelect && housingSelect.value !== '') {
+                const housing = housingSelect.value.toString().charAt(0);
+                codeArray[22] = housing;
+                console.log(`Position 22: Housing → ${housing}`);
             }
-            code += ip;
-            console.log('Step 20-21: IP "' + ip + '" → Code so far: "' + code + '"');
             
-            // Position 22: Emergency (1 char)
-            const emergency = formData.emergency || 'X';
-            code += emergency;
-            console.log('Step 22: Emergency "' + emergency + '" → Code so far: "' + code + '"');
+            // Emergency Backup (Position 23, 1 bandwidth)
+            const emergencySelect = document.getElementById('pos23');
+            if (emergencySelect && emergencySelect.value !== '') {
+                const emergency = emergencySelect.value.toString().charAt(0);
+                codeArray[23] = emergency;
+                console.log(`Position 23: Emergency → ${emergency}`);
+            }
             
-            // Position 23: Mounting (1 char)
-            const mounting = formData.mounting || 'X';
-            code += mounting;
-            console.log('Step 23: Mounting "' + mounting + '" → Code so far: "' + code + '"');
+            const finalCode = codeArray.join('');
+            console.log('🎯 FINAL CORRECTED CODE:', finalCode);
+            console.log('🎯 CORRECTED Encoding Examples:');
+            console.log('  - Supplier 8: X8 (not X8X)');
+            console.log('  - Supplier 10: 10 (not X10)');
+            console.log('  - All fields stay within their bandwidth!');
+            console.log('🔧 CORRECTED Encoding Structure:');
+            console.log('  ✅ Supplier (0-1): Single digit = X+digit, Double digit = digit+digit');
+            console.log('  ✅ Model (2-5): 4 characters');
+            console.log('  ✅ Spacer (6): X');
+            console.log('  ✅ Wattage (7-9): 3 bandwidth (XX+digit for single, X+digits for double, 12K special)');
+            console.log('  ✅ CCT (10-11): 2 bandwidth');
+            console.log('  ✅ Spacer (12): X');
+            console.log('  ✅ Size (13-14): 2 bandwidth');
+            console.log('  ✅ Spacer (15): X');
+            console.log('  ✅ LED (16-17): 2 bandwidth');
+            console.log('  ✅ Spacer (18): X');
+            console.log('  ✅ Driver (19-20): 2 bandwidth (no overflow!)');
+            console.log('  ✅ Diffuser (21): 1 bandwidth');
+            console.log('  ✅ Housing (22): 1 bandwidth');
+            console.log('  ✅ Emergency (23): 1 bandwidth');
             
-            console.log('🎯 FINAL RESULT:', code, `(${code.length} chars)`);
-            console.log('🎯 DYNAMIC STRUCTURE: X spacers get eaten by 2-digit values');
-            console.log('🎯 Examples:');
-            console.log('  - Driver 6: ...X6... (X spacer remains)');
-            console.log('  - Driver 11: ...11... (second digit eats the X)');
-            
-            document.getElementById('generatedCode').textContent = code;
-        }
-        
-        // CORRECTED: Map UPC config positions to encoder field names
-        function mapPositionToField(position) {
-            const mapping = {
-                '1': 'supplier',    // Supplier Reference → supplier
-                '3': 'model',       // Product Model → model  
-                '7': 'wattage',     // Power Rating (Watts) → wattage
-                '10': 'cct',        // Color Temperature (CCT) → cct
-                '12': 'size',       // Physical Dimensions → size
-                '14': 'led',        // LED Chip Brand → led
-                '16': 'driver',     // Driver Brand → driver
-                '18': 'diffuser',   // Diffuser Type → diffuser
-                '19': 'housing',    // Housing Material → housing
-                '20': 'dimming',    // Dimming Control → dimming
-                '21': 'ip',         // IP Protection Rating → ip
-                '23': 'emergency',  // Emergency Backup → emergency
-                '24': 'mounting'    // Mounting Frame → mounting
-            };
-            return mapping[position] || null;
+            document.getElementById('generatedCode').textContent = finalCode;
         }
         
         // Copy code to clipboard
@@ -2266,95 +1850,46 @@
             doc.setFontSize(24);
             doc.setFont(undefined, 'bold');
             doc.setTextColor(30, 64, 175);
-            doc.text('UNIFIED PRODUCT CODE REGISTRY', 20, 30);
+            doc.text('CORRECTED UPC REGISTRY', 20, 30);
             
             doc.setFontSize(16);
             doc.setTextColor(107, 114, 128);
             doc.setFont(undefined, 'normal');
-            doc.text('Professional Manufacturing Code Management System', 20, 45);
+            doc.text('Fixed Bandwidth Allocation System', 20, 45);
             
             doc.setFontSize(12);
             doc.setTextColor(0, 0, 0);
             doc.text(`Report Generated: ${new Date().toLocaleString()}`, 20, 60);
             doc.text(`Total Product Codes: ${savedCodes.length}`, 20, 70);
-            doc.text('Status: Active Registry Export', 20, 80);
             
-            doc.setLineWidth(1);
-            doc.setDrawColor(59, 130, 246);
-            doc.line(20, 90, 190, 90);
-            
-            doc.setFontSize(14);
-            doc.setFont(undefined, 'bold');
-            doc.setTextColor(30, 64, 175);
-            doc.text('Product Code Registry', 20, 105);
-            
-            let yPosition = 120;
+            let yPosition = 90;
             
             savedCodes.forEach((item, index) => {
                 if (yPosition > 250) {
                     doc.addPage();
                     yPosition = 30;
-                    
-                    doc.setFontSize(14);
-                    doc.setFont(undefined, 'bold');
-                    doc.setTextColor(30, 64, 175);
-                    doc.text('Product Code Registry (Continued)', 20, yPosition);
-                    yPosition += 20;
                 }
-                
-                doc.setFont(undefined, 'bold');
-                doc.setFontSize(12);
-                doc.setTextColor(0, 0, 0);
-                doc.text(`${String(index + 1).padStart(3, '0')}.`, 20, yPosition);
                 
                 doc.setFont('courier', 'bold');
                 doc.setFontSize(14);
                 doc.setTextColor(30, 64, 175);
-                doc.text(item.code, 35, yPosition);
+                doc.text(`${String(index + 1).padStart(3, '0')}. ${item.code}`, 20, yPosition);
                 
                 doc.setFont(undefined, 'normal');
                 doc.setFontSize(10);
                 doc.setTextColor(107, 114, 128);
-                doc.text(`Generated: ${item.timestamp}`, 35, yPosition + 8);
+                doc.text(`Generated: ${item.timestamp}`, 20, yPosition + 8);
                 
-                if (item.specifications) {
-                    let specText = [];
-                    Object.entries(item.specifications).forEach(([key, value]) => {
-                        if (value && !value.startsWith('Select')) {
-                            specText.push(`${key}: ${value.replace(/^\d+\s*-\s*/, '')}`);
-                        }
-                    });
-                    
-                    if (specText.length > 0) {
-                        doc.setFontSize(8);
-                        doc.setTextColor(75, 85, 99);
-                        const specString = specText.slice(0, 3).join(' • ');
-                        const splitText = doc.splitTextToSize(specString, 150);
-                        doc.text(splitText, 35, yPosition + 16);
-                    }
-                }
-                
-                yPosition += 35;
+                yPosition += 25;
             });
             
-            const pageCount = doc.internal.getNumberOfPages();
-            for (let i = 1; i <= pageCount; i++) {
-                doc.setPage(i);
-                doc.setFontSize(8);
-                doc.setFont(undefined, 'normal');
-                doc.setTextColor(107, 114, 128);
-                doc.text('Unified Product Code Generator - Professional Manufacturing Solution', 20, 285);
-                doc.text(`Page ${i} of ${pageCount}`, 170, 285);
-                doc.text('Confidential - Internal Use Only', 80, 292);
-            }
-            
-            const fileName = `UPC_Registry_${new Date().toISOString().split('T')[0]}_${savedCodes.length}codes.pdf`;
+            const fileName = `Corrected_UPC_Registry_${new Date().toISOString().split('T')[0]}.pdf`;
             doc.save(fileName);
             
-            showToast('Professional PDF report exported successfully', 'success');
+            showToast('Corrected UPC registry exported successfully', 'success');
         }
         
-        // Show toast notification with different types
+        // Show toast notification
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
             toast.textContent = message;
@@ -2365,30 +1900,6 @@
                 toast.classList.remove('show');
             }, 4000);
         }
-        
-        // Manual debug function - can be called from console
-        window.debugExcelProcessing = function() {
-            console.log('🔧 Debug: Current Excel Data:', window.excelData);
-            console.log('🔧 Debug: Current UPC Config:', upcConfig);
-            
-            if (window.excelData && window.excelData.Wattage) {
-                console.log('🔧 Force replacing Power Rating with Wattage data...');
-                const wattageOptions = [
-                    { value: "", text: "Select Power Rating" },
-                    ...window.excelData.Wattage.options.slice(1)
-                ];
-                
-                upcConfig[7] = {
-                    ...upcConfig[7],
-                    options: wattageOptions
-                };
-                
-                reinitializeForm();
-                console.log('✅ Power Rating forcefully updated!');
-            } else {
-                console.log('❌ No Wattage data found in Excel');
-            }
-        };
         
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', function() {
