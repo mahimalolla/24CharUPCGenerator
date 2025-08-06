@@ -1367,7 +1367,9 @@
                     { value: "150", text: "150W" },
                     { value: "200", text: "200W" },
                     { value: "218", text: "218W" },
-                    { value: "12K", text: "12000W (12K)" }
+                    { value: "1K", text: "1000W (1K)" },
+                    { value: "12K", text: "12000W (12K)" },
+                    { value: "15K", text: "15000W (15K)" }
                 ]
             },
             4: {
@@ -1605,11 +1607,24 @@
                 const wattage = wattageSelect.value.toString().toUpperCase();
                 console.log(`🔧 Processing wattage: "${wattage}"`);
                 
-                if (wattage === '12K') {
+                if (wattage === '1K') {
+                    // Special case: 1K → X1K
+                    codeArray[6] = 'X';
+                    codeArray[7] = '1';
+                    codeArray[8] = 'K';
+                    console.log('Position 6-8: 1K → X1K');
+                } else if (wattage === '12K') {
+                    // Special case: 12K → 12K
                     codeArray[6] = '1';
                     codeArray[7] = '2';
                     codeArray[8] = 'K';
                     console.log('Position 6-8: 12K → 12K');
+                } else if (wattage === '15K') {
+                    // Special case: 15K → 15K
+                    codeArray[6] = '1';
+                    codeArray[7] = '5';
+                    codeArray[8] = 'K';
+                    console.log('Position 6-8: 15K → 15K');
                 } else {
                     const watt = parseInt(wattage.replace(/[^\d]/g, ''));
                     if (!isNaN(watt)) {
@@ -1773,21 +1788,29 @@
             }
             
             const finalCode = codeArray.join('');
-            console.log('🎯 FINAL ORDERED CODE:', finalCode);
-            console.log('🔧 COMPLETE SEQUENTIAL STRUCTURE:');
-            console.log('  1. Supplier (0-1): 2 chars');
-            console.log('  2. Model (2-5): 4 chars'); 
-            console.log('  3. Wattage (6-8): 3 chars');
-            console.log('  4. CCT (9-10): 2 chars');
-            console.log('  5. Size (11-12): 2 chars');
-            console.log('  6. LED (13-14): 2 chars');
-            console.log('  7. Driver (15-16): 2 chars');
-            console.log('  8. Diffuser (17): 1 char');
-            console.log('  9. Housing (18): 1 char');
-            console.log('  10. Dimming (19): 1 char');
-            console.log('  11. IP Rating (20-21): 2 chars');
-            console.log('  12. Emergency (22): 1 char - 23rd position');
-            console.log('  13. Mounting Frame (23): 1 char - 24th position');
+            console.log('🎯 PERFECT ORDER UPC CODE:', finalCode);
+            console.log('⚡ WATTAGE ENCODING EXAMPLES:');
+            console.log('  - 6W → XX6');
+            console.log('  - 20W → X20'); 
+            console.log('  - 218W → 218');
+            console.log('  - 1K → X1K ✅ FIXED!');
+            console.log('  - 12K → 12K');
+            console.log('  - 15K → 15K');
+            console.log('✅ ALL 13 FIELDS IN SEQUENTIAL ORDER:');
+            console.log('  1️⃣ Supplier Reference (0-1): 2 chars');
+            console.log('  2️⃣ Product Model (2-5): 4 chars'); 
+            console.log('  3️⃣ Power Rating (6-8): 3 chars');
+            console.log('  4️⃣ Color Temperature (9-10): 2 chars');
+            console.log('  5️⃣ Physical Dimensions (11-12): 2 chars');
+            console.log('  6️⃣ LED Chip Brand (13-14): 2 chars');
+            console.log('  7️⃣ Driver Brand (15-16): 2 chars');
+            console.log('  8️⃣ Diffuser Type (17): 1 char');
+            console.log('  9️⃣ Housing Material (18): 1 char');
+            console.log('  🔟 Dimming Control (19): 1 char');
+            console.log('  1️⃣1️⃣ IP Protection Rating (20-21): 2 chars');
+            console.log('  1️⃣2️⃣ Emergency Backup (22): 1 char - 23RD POSITION ✅');
+            console.log('  1️⃣3️⃣ Mounting Frame (23): 1 char - 24TH POSITION ✅');
+            console.log('🏆 ALL EXCEL COLUMNS WILL MAP TO CORRECT POSITIONS!');
             
             document.getElementById('generatedCode').textContent = finalCode;
         }
@@ -1943,12 +1966,12 @@
             doc.setFontSize(24);
             doc.setFont(undefined, 'bold');
             doc.setTextColor(30, 64, 175);
-            doc.text('COMPLETE UPC REGISTRY', 20, 30);
+            doc.text('PERFECT ORDER UPC REGISTRY', 20, 30);
             
             doc.setFontSize(16);
             doc.setTextColor(107, 114, 128);
             doc.setFont(undefined, 'normal');
-            doc.text('All Fields • No X Spacers • Smart Encoding System', 20, 45);
+            doc.text('All 13 Fields • Sequential Order • Emergency 23rd • Mounting 24th', 20, 45);
             
             doc.setFontSize(12);
             doc.setTextColor(0, 0, 0);
@@ -1976,10 +1999,10 @@
                 yPosition += 25;
             });
             
-            const fileName = `Complete_UPC_Registry_${new Date().toISOString().split('T')[0]}.pdf`;
+            const fileName = `Perfect_Order_UPC_Registry_${new Date().toISOString().split('T')[0]}.pdf`;
             doc.save(fileName);
             
-            showToast('Complete UPC registry (all fields) exported successfully', 'success');
+            showToast('Perfect Order UPC registry (all 13 fields) exported successfully', 'success');
         }
         
         // Show toast notification
